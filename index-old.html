@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMF Support Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] },
+          colors: {
+            imf: {
+              navy: '#002244',
+              blue: '#336699',
+              accent: '#4A90D9',
+              light: '#E8F0FE',
+              'light-hover': '#D0E2FC',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #F3F4F6; }
+
+    /* Custom scrollbar */
+    .scroll-area::-webkit-scrollbar { width: 6px; }
+    .scroll-area::-webkit-scrollbar-track { background: transparent; }
+    .scroll-area::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    .scroll-area::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* Hover states for interactive cards */
+    .action-btn { transition: all 0.15s ease; }
+    .action-btn:hover { background: #E8F0FE !important; border-color: #4A90D9 !important; }
+
+    .stat-card { transition: box-shadow 0.15s ease; }
+    .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+
+    .question-row { transition: background 0.15s ease; }
+    .question-row:hover { background: #F9FAFB; }
+
+    .feedback-row { transition: background 0.15s ease; }
+    .feedback-row:hover { background: #F9FAFB; }
+
+    .resource-btn { transition: all 0.15s ease; }
+    .resource-btn:hover { background: #E8F0FE !important; border-color: #4A90D9 !important; }
+
+    .text-link { transition: color 0.1s ease; }
+    .text-link:hover { text-decoration: underline; }
+
+    /* Nav tab underline — inverted (white text on blue bg) */
+    .nav-tab { position: relative; transition: color 0.15s ease; }
+    .nav-tab.active { color: #ffffff !important; }
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -17px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #ffffff;
+      border-radius: 1px;
+    }
+    .nav-tab:not(.active) { color: rgba(255,255,255,0.65) !important; }
+    .nav-tab:hover:not(.active) { color: rgba(255,255,255,0.9) !important; }
+
+    /* Dropdown */
+    .dropdown { display: none; }
+    .dropdown.open { display: block; }
+
+    /* Badge pulse */
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .badge-pulse { animation: pulse-badge 2s ease-in-out infinite; }
+
+    /* AIDA gradient button */
+    .aida-btn {
+      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);
+      color: #fff;
+      border: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 6px rgba(99,102,241,0.35);
+    }
+    .aida-btn:hover {
+      box-shadow: 0 2px 12px rgba(139,92,246,0.5);
+      filter: brightness(1.08);
+    }
+
+    /* 9-dot grid icon */
+    .grid-dots {
+      display: grid;
+      grid-template-columns: repeat(3, 4px);
+      gap: 3px;
+    }
+    .grid-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      transition: background 0.15s;
+    }
+    .grid-dots-btn:hover .grid-dots span { background: #fff; }
+
+    /* Nav search placeholder */
+    .copilot-panel input::placeholder,
+    nav input::placeholder { color: rgba(255,255,255,0.45); }
+
+    /* Copilot panel slide */
+    .copilot-panel {
+      width: 0;
+      min-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      border-left: 0 solid #E5E7EB;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.25s ease,
+                  border-left-width 0.35s ease;
+      background: linear-gradient(180deg, #E8F0FE 0%, #FFFFFF 100%);
+    }
+    .copilot-panel.open {
+      width: 600px;
+      opacity: 1;
+      border-left-width: 1px;
+    }
+
+    /* AIDA button active (panel open) */
+    .aida-btn.active {
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #9333EA 100%);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.4), 0 2px 12px rgba(139,92,246,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col h-screen overflow-hidden">
+
+    <!-- ── Top Navigation Bar (full width) ── -->
+    <nav class="px-5 h-14 flex items-center flex-shrink-0 z-50" style="background: #004C97;">
+
+        <!-- Left cluster: Logo + Separator + Name + Nav Tabs -->
+        <div class="flex items-center gap-0 flex-1 min-w-0">
+
+          <!-- IMF Logo (plain text, no circle) -->
+          <span class="text-white font-bold tracking-wide flex-shrink-0" style="font-size: 1.25rem; letter-spacing: 0.12em;">IMF</span>
+
+          <!-- Vertical Separator -->
+          <div class="mx-3 flex-shrink-0" style="width: 1px; height: 24px; background: rgba(255,255,255,0.3);"></div>
+
+          <!-- Service Name -->
+          <span class="text-white font-semibold flex-shrink-0 mr-8" style="font-size: 1rem;">Support Center</span>
+
+          <!-- Navigation Tabs (left-aligned) -->
+          <div class="flex items-center gap-5">
+            <button class="nav-tab active text-sm font-medium bg-transparent border-none cursor-pointer pb-1" onclick="setTab(this)">Dashboard</button>
+            <button class="nav-tab text-sm font-medium bg-transparent border-none cursor-pointer pb-1" onclick="setTab(this)">Queries</button>
+            <button class="nav-tab text-sm font-medium bg-transparent border-none cursor-pointer pb-1" onclick="setTab(this)">Policies</button>
+            <button class="nav-tab text-sm font-medium bg-transparent border-none cursor-pointer pb-1" onclick="setTab(this)">Analytics</button>
+            <button class="nav-tab text-sm font-medium bg-transparent border-none cursor-pointer pb-1" onclick="setTab(this)">Users</button>
+          </div>
+        </div>
+
+        <!-- Right cluster: Search, AIDA button, Help, Avatar, 9-dots -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+
+          <!-- Search Bar -->
+          <div class="relative mr-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2" style="color: rgba(255,255,255,0.45); pointer-events: none;"></i>
+            <input type="text" placeholder="Search policies, FAQs..." class="text-sm rounded-lg py-1.5 pl-8 pr-3 border-none outline-none" style="width: 200px; background: rgba(255,255,255,0.12); color: #fff;" onfocus="this.style.background='rgba(255,255,255,0.2)';this.style.boxShadow='0 0 0 2px rgba(255,255,255,0.25)'" onblur="this.style.background='rgba(255,255,255,0.12)';this.style.boxShadow='none'" />
+          </div>
+
+          <!-- AIDA Assistant Button -->
+          <button id="aida-btn" class="aida-btn active flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold cursor-pointer" onclick="toggleCopilot()">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            AIDA Assistant
+          </button>
+
+          <!-- Help Center -->
+          <button class="p-2 rounded-lg bg-transparent border-none cursor-pointer" style="color: rgba(255,255,255,0.7);" onmouseenter="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'" onmouseleave="this.style.background='transparent';this.style.color='rgba(255,255,255,0.7)'" title="Help Center">
+            <i data-lucide="help-circle" class="w-[18px] h-[18px]"></i>
+          </button>
+
+          <!-- User Avatar with Dropdown -->
+          <div class="relative">
+            <button id="avatar-btn" class="flex items-center gap-2 py-1 px-2 rounded-lg bg-transparent border-none cursor-pointer" onclick="toggleDropdown()" onmouseenter="this.style.background='rgba(255,255,255,0.1)'" onmouseleave="this.style.background='transparent'">
+              <div class="relative flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="John Miller" class="w-8 h-8 rounded-full object-cover" style="border: 2px solid rgba(255,255,255,0.4);" />
+                <!-- Alert badge -->
+                <span class="absolute -top-1 -right-1 w-[18px] h-[18px] rounded-full bg-red-500 text-white font-bold flex items-center justify-center badge-pulse" style="font-size: 10px;">3</span>
+              </div>
+              <span class="text-white text-sm font-medium">John Miller</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5" style="color: rgba(255,255,255,0.6);"></i>
+            </button>
+
+            <div id="user-dropdown" class="dropdown absolute right-0 mt-1 w-44 bg-white rounded-lg py-1 border border-gray-200 z-60" style="box-shadow: 0 4px 12px rgba(0,0,0,.12);">
+              <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 bg-transparent border-none cursor-pointer text-gray-700">Profile</button>
+              <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 bg-transparent border-none cursor-pointer text-gray-700">Notifications (3)</button>
+              <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 bg-transparent border-none cursor-pointer text-gray-700">Settings</button>
+              <hr class="my-1 border-gray-200" />
+              <button class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 bg-transparent border-none cursor-pointer text-red-600">Sign Out</button>
+            </div>
+          </div>
+
+          <!-- 9-Dots Grid Icon (last) -->
+          <button class="grid-dots-btn p-2 rounded-lg bg-transparent border-none cursor-pointer" title="All IMF Services" onmouseenter="this.style.background='rgba(255,255,255,0.1)'" onmouseleave="this.style.background='transparent'">
+            <div class="grid-dots">
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+          </button>
+        </div>
+    </nav>
+
+    <!-- ── Below Nav: Two-column layout ── -->
+    <div class="flex flex-1 min-h-0 overflow-hidden">
+
+      <!-- ==================== LEFT: Dashboard Panel ==================== -->
+      <div class="flex-1 min-w-0 overflow-y-auto scroll-area p-6">
+        <div class="max-w-[1280px] mx-auto space-y-6">
+
+          <!-- ════════ HERO: Key Metrics ════════ -->
+          <div class="grid grid-cols-4 gap-4">
+            <!-- Queries This Week -->
+            <div class="stat-card bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Queries This Week</p>
+              <p class="text-3xl font-bold text-imf-navy">847</p>
+              <p class="text-sm font-medium mt-2 flex items-center gap-1 text-emerald-600">
+                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> 12% vs last week
+              </p>
+            </div>
+            <!-- Unanswered Questions -->
+            <div class="stat-card bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Unanswered Questions</p>
+              <p class="text-3xl font-bold text-imf-navy">23</p>
+              <div class="mt-2">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">Requires HR Review</span>
+              </div>
+            </div>
+            <!-- Pending Feedback -->
+            <div class="stat-card bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Pending Feedback</p>
+              <p class="text-3xl font-bold text-imf-navy">8</p>
+              <button class="text-sm font-medium mt-2 flex items-center gap-1 text-imf-accent bg-transparent border-none cursor-pointer text-link p-0">
+                View feedback queue <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            <!-- Content Items -->
+            <div class="stat-card bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Content Items</p>
+              <p class="text-3xl font-bold text-imf-navy">134</p>
+              <p class="text-xs text-gray-500 mt-2">7 updated this week</p>
+            </div>
+          </div>
+
+          <!-- ════════ TWO-COLUMN CONTENT ════════ -->
+          <div class="grid gap-6" style="grid-template-columns: 65fr 35fr;">
+
+            <!-- ── LEFT COLUMN (Main) ── -->
+            <div class="space-y-6 min-w-0">
+
+              <!-- Questions Requiring Attention -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <i data-lucide="alert-triangle" class="w-[18px] h-[18px] text-imf-accent"></i>
+                  <h2 class="text-base font-bold text-imf-navy">Questions Requiring Your Attention</h2>
+                </div>
+                <div class="space-y-3">
+                  <!-- Question 1 -->
+                  <div class="question-row rounded-lg p-4 border border-gray-200">
+                    <p class="font-medium text-gray-900 mb-2 text-sm">Can I extend my trip for personal travel at my expense?</p>
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <div class="flex items-center gap-3 text-xs text-gray-500">
+                        <span class="px-2 py-0.5 rounded-full font-semibold bg-imf-light text-imf-navy">Finance Dept</span>
+                        <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 2 hours ago</span>
+                      </div>
+                      <div class="flex gap-2">
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 text-white border-none" style="background:#4A90D9;">Answer</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700">Add to FAQ</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700">
+                          <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Forward
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Question 2 -->
+                  <div class="question-row rounded-lg p-4 border border-gray-200">
+                    <p class="font-medium text-gray-900 mb-2 text-sm">What's the per diem rate for Nairobi in 2026?</p>
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <div class="flex items-center gap-3 text-xs text-gray-500">
+                        <span class="px-2 py-0.5 rounded-full font-semibold bg-imf-light text-imf-navy">Research Dept</span>
+                        <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 4 hours ago</span>
+                      </div>
+                      <div class="flex gap-2">
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 text-white border-none" style="background:#4A90D9;">Answer</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700">Add to FAQ</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700">
+                          <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Forward
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Question 3 -->
+                  <div class="question-row rounded-lg p-4 border border-gray-200">
+                    <p class="font-medium text-gray-900 mb-2 text-sm">Do I need pre-approval for business class on 8-hour flights?</p>
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <div class="flex items-center gap-3 text-xs text-gray-500">
+                        <span class="px-2 py-0.5 rounded-full font-semibold bg-imf-light text-imf-navy">Legal Dept</span>
+                        <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Yesterday</span>
+                      </div>
+                      <div class="flex gap-2">
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 text-white border-none" style="background:#4A90D9;">Answer</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700">Add to FAQ</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 border border-gray-300 bg-white text-gray-700">
+                          <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Forward
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Most Asked Questions This Week -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <i data-lucide="bar-chart-2" class="w-[18px] h-[18px] text-imf-accent"></i>
+                  <h2 class="text-base font-bold text-imf-navy">Most Asked Questions This Week</h2>
+                </div>
+                <div class="space-y-4">
+                  <!-- Item 1 -->
+                  <div>
+                    <div class="flex justify-between text-sm mb-1">
+                      <span class="font-medium text-gray-900">1. Visa application procedures</span>
+                      <span class="text-gray-500 text-xs font-semibold">127 queries</span>
+                    </div>
+                    <div class="w-full rounded-full h-2 bg-gray-200">
+                      <div class="h-2 rounded-full" style="width:100%; background: linear-gradient(90deg, #4A90D9, #336699);"></div>
+                    </div>
+                  </div>
+                  <!-- Item 2 -->
+                  <div>
+                    <div class="flex justify-between text-sm mb-1">
+                      <span class="font-medium text-gray-900">2. Per diem rates by country</span>
+                      <span class="text-gray-500 text-xs font-semibold">94 queries</span>
+                    </div>
+                    <div class="w-full rounded-full h-2 bg-gray-200">
+                      <div class="h-2 rounded-full" style="width:74%; background: linear-gradient(90deg, #4A90D9, #336699);"></div>
+                    </div>
+                  </div>
+                  <!-- Item 3 -->
+                  <div>
+                    <div class="flex justify-between text-sm mb-1">
+                      <span class="font-medium text-gray-900">3. Flight booking deadlines</span>
+                      <span class="text-gray-500 text-xs font-semibold">76 queries</span>
+                    </div>
+                    <div class="w-full rounded-full h-2 bg-gray-200">
+                      <div class="h-2 rounded-full" style="width:60%; background: linear-gradient(90deg, #4A90D9, #336699);"></div>
+                    </div>
+                  </div>
+                  <!-- Item 4 -->
+                  <div>
+                    <div class="flex justify-between text-sm mb-1">
+                      <span class="font-medium text-gray-900">4. Hotel expense limits</span>
+                      <span class="text-gray-500 text-xs font-semibold">68 queries</span>
+                    </div>
+                    <div class="w-full rounded-full h-2 bg-gray-200">
+                      <div class="h-2 rounded-full" style="width:54%; background: linear-gradient(90deg, #4A90D9, #336699);"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-5">
+                  <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 text-white border-none" style="background:#002244;">Update These Policies</button>
+                </div>
+              </div>
+
+              <!-- Recent User Feedback -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <h2 class="text-base font-bold text-imf-navy">Recent User Feedback</h2>
+                </div>
+                <div class="space-y-3">
+                  <!-- Feedback 1: 5 stars -->
+                  <div class="feedback-row rounded-lg p-4 border border-gray-200">
+                    <div class="flex items-center gap-0.5 mb-1" id="stars-5"></div>
+                    <p class="text-sm text-gray-700 mt-2 mb-3">"Found exactly what I needed about visa timelines!"</p>
+                    <div class="flex gap-4">
+                      <button class="text-xs font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0">View Full Feedback</button>
+                      <button class="text-xs font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0 flex items-center gap-1">
+                        <i data-lucide="corner-up-left" class="w-3 h-3"></i> Reply to User
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Feedback 2: 3 stars -->
+                  <div class="feedback-row rounded-lg p-4 border border-gray-200">
+                    <div class="flex items-center gap-0.5 mb-1" id="stars-3"></div>
+                    <p class="text-sm text-gray-700 mt-2 mb-3">"Answer was helpful but could be clearer on exceptions"</p>
+                    <div class="flex gap-4">
+                      <button class="text-xs font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0">View Full Feedback</button>
+                      <button class="text-xs font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0 flex items-center gap-1">
+                        <i data-lucide="corner-up-left" class="w-3 h-3"></i> Reply to User
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Feedback 3: 1 star -->
+                  <div class="feedback-row rounded-lg p-4 border border-gray-200">
+                    <div class="flex items-center gap-0.5 mb-1" id="stars-1"></div>
+                    <p class="text-sm text-gray-700 mt-2 mb-3">"Couldn't find info about travel insurance requirements"</p>
+                    <div class="flex gap-4">
+                      <button class="text-xs font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0">View Full Feedback</button>
+                      <button class="text-xs font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0 flex items-center gap-1">
+                        <i data-lucide="corner-up-left" class="w-3 h-3"></i> Reply to User
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── RIGHT COLUMN (Sidebar) ── -->
+            <div class="space-y-6 min-w-0">
+
+              <!-- Quick Actions -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="text-lg">&#127919;</span>
+                  <h2 class="text-base font-bold text-imf-navy">Quick Actions</h2>
+                </div>
+                <div class="space-y-2">
+                  <button class="action-btn w-full flex items-center gap-3 p-3 rounded-lg text-left text-sm font-medium border border-gray-200 bg-white text-gray-800 cursor-pointer">
+                    <i data-lucide="file-text" class="w-[18px] h-[18px] text-imf-accent"></i> Add New Policy / FAQ
+                  </button>
+                  <button class="action-btn w-full flex items-center gap-3 p-3 rounded-lg text-left text-sm font-medium border border-gray-200 bg-white text-gray-800 cursor-pointer">
+                    <i data-lucide="file-edit" class="w-[18px] h-[18px] text-imf-accent"></i> Update Existing Content
+                  </button>
+                  <button class="action-btn w-full flex items-center gap-3 p-3 rounded-lg text-left text-sm font-medium border border-gray-200 bg-white text-gray-800 cursor-pointer">
+                    <i data-lucide="message-square" class="w-[18px] h-[18px] text-imf-accent"></i> Review Feedback Queue
+                  </button>
+                  <button class="action-btn w-full flex items-center gap-3 p-3 rounded-lg text-left text-sm font-medium border border-gray-200 bg-white text-gray-800 cursor-pointer">
+                    <i data-lucide="upload" class="w-[18px] h-[18px] text-imf-accent"></i> Upload Travel Documents
+                  </button>
+                  <button class="action-btn w-full flex items-center gap-3 p-3 rounded-lg text-left text-sm font-medium border border-gray-200 bg-white text-gray-800 cursor-pointer">
+                    <i data-lucide="send" class="w-[18px] h-[18px] text-imf-accent"></i> Send Announcement
+                  </button>
+                </div>
+              </div>
+
+              <!-- Content Status Summary -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <h2 class="text-base font-bold text-imf-navy">Content Status Summary</h2>
+                </div>
+                <div class="space-y-3 text-sm">
+                  <div class="flex justify-between items-baseline">
+                    <span class="text-gray-600">Published policies</span>
+                    <span class="font-bold text-imf-navy">127</span>
+                  </div>
+                  <div class="flex justify-between items-baseline">
+                    <span class="text-gray-600">Draft policies <span class="text-gray-400 text-xs ml-1">(awaiting review)</span></span>
+                    <span class="font-bold text-amber-600">5</span>
+                  </div>
+                  <div class="flex justify-between items-baseline">
+                    <span class="text-gray-600">Outdated content <span class="text-gray-400 text-xs ml-1">(&gt; 12 months old)</span></span>
+                    <span class="font-bold text-red-600">3</span>
+                  </div>
+                  <div class="flex justify-between items-baseline">
+                    <span class="text-gray-600">Scheduled updates <span class="text-gray-400 text-xs ml-1">(next week)</span></span>
+                    <span class="font-bold text-emerald-600">2</span>
+                  </div>
+                </div>
+                <button class="mt-4 text-sm font-semibold text-imf-accent bg-transparent border-none cursor-pointer text-link p-0">Manage All Content &rarr;</button>
+              </div>
+
+              <!-- Recent Activity Log -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <i data-lucide="zap" class="w-[18px] h-[18px] text-imf-accent"></i>
+                  <h2 class="text-base font-bold text-imf-navy">Recent Activity</h2>
+                </div>
+                <div>
+                  <!-- Activity 1 -->
+                  <div class="flex gap-3 text-sm">
+                    <div class="flex flex-col items-center" style="width: 12px;">
+                      <div class="rounded-full flex-shrink-0 mt-1.5" style="width:8px; height:8px; background:#4A90D9;"></div>
+                      <div class="flex-1 mt-1 mb-1 rounded" style="width:2px; background:#E5E7EB;"></div>
+                    </div>
+                    <div class="pb-4">
+                      <p class="text-gray-800 font-medium leading-snug">Sarah Johnson updated 'Per Diem Rates &ndash; Europe'</p>
+                      <p class="text-gray-400 text-xs mt-0.5">2 hours ago</p>
+                    </div>
+                  </div>
+                  <!-- Activity 2 -->
+                  <div class="flex gap-3 text-sm">
+                    <div class="flex flex-col items-center" style="width: 12px;">
+                      <div class="rounded-full flex-shrink-0 mt-1.5" style="width:8px; height:8px; background:#4A90D9;"></div>
+                      <div class="flex-1 mt-1 mb-1 rounded" style="width:2px; background:#E5E7EB;"></div>
+                    </div>
+                    <div class="pb-4">
+                      <p class="text-gray-800 font-medium leading-snug">You published 'New Visa Requirements 2026'</p>
+                      <p class="text-gray-400 text-xs mt-0.5">Yesterday, 3:45 PM</p>
+                    </div>
+                  </div>
+                  <!-- Activity 3 -->
+                  <div class="flex gap-3 text-sm">
+                    <div class="flex flex-col items-center" style="width: 12px;">
+                      <div class="rounded-full flex-shrink-0 mt-1.5" style="width:8px; height:8px; background:#4A90D9;"></div>
+                    </div>
+                    <div class="pb-1">
+                      <p class="text-gray-800 font-medium leading-snug">Michael Chen added FAQ about baggage policies</p>
+                      <p class="text-gray-400 text-xs mt-0.5">2 days ago</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upcoming Reminders -->
+              <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+                <div class="flex items-center gap-2 mb-4">
+                  <i data-lucide="calendar" class="w-[18px] h-[18px] text-imf-accent"></i>
+                  <h2 class="text-base font-bold text-imf-navy">Upcoming Reminders</h2>
+                </div>
+                <div class="space-y-2">
+                  <div class="text-sm p-2.5 rounded-md bg-imf-light text-gray-800" style="border-left: 3px solid #4A90D9;">
+                    Annual travel policy review due: March 15
+                  </div>
+                  <div class="text-sm p-2.5 rounded-md bg-imf-light text-gray-800" style="border-left: 3px solid #4A90D9;">
+                    Update per diem rates (quarterly)
+                  </div>
+                  <div class="text-sm p-2.5 rounded-md bg-imf-light text-gray-800" style="border-left: 3px solid #4A90D9;">
+                    Travel insurance policy expires: April 30
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════════ BOTTOM SECTION ════════ -->
+
+          <!-- Policy Update Suggestions -->
+          <div class="rounded-xl p-6" style="background: linear-gradient(135deg, #E8F0FE 0%, #EFF6FF 100%); border: 1px solid rgba(74,144,217,0.25);">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-lg">&#128161;</span>
+              <h2 class="text-base font-bold text-imf-navy">Policy Update Suggestions</h2>
+            </div>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-start gap-2 text-sm text-gray-700">
+                <span class="text-imf-accent font-bold flex-shrink-0">&bull;</span>
+                <span>15 users asked about remote work + travel policies &mdash; Consider adding guidance</span>
+              </div>
+              <div class="flex items-start gap-2 text-sm text-gray-700">
+                <span class="text-imf-accent font-bold flex-shrink-0">&bull;</span>
+                <span>Per diem questions increased 40% &mdash; Rates may need clarification</span>
+              </div>
+              <div class="flex items-start gap-2 text-sm text-gray-700">
+                <span class="text-imf-accent font-bold flex-shrink-0">&bull;</span>
+                <span>Frequent confusion about pre-approval thresholds</span>
+              </div>
+            </div>
+            <button class="px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer flex items-center gap-1.5 text-white border-none" style="background:#002244;">
+              <i data-lucide="plus" class="w-[15px] h-[15px]"></i> Create Policy Update
+            </button>
+          </div>
+
+          <!-- Popular Topics Dashboard -->
+          <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-lg">&#128200;</span>
+              <h2 class="text-base font-bold text-imf-navy">Popular Topics Dashboard</h2>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                  <span class="font-medium text-gray-800">Visas &amp; Documentation</span>
+                  <span class="font-bold text-gray-600">35%</span>
+                </div>
+                <div class="w-full rounded-full h-3 bg-gray-200">
+                  <div class="h-3 rounded-full" style="width:35%; background:#002244;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                  <span class="font-medium text-gray-800">Per Diem &amp; Expenses</span>
+                  <span class="font-bold text-gray-600">28%</span>
+                </div>
+                <div class="w-full rounded-full h-3 bg-gray-200">
+                  <div class="h-3 rounded-full" style="width:28%; background:#336699;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                  <span class="font-medium text-gray-800">Booking Procedures</span>
+                  <span class="font-bold text-gray-600">22%</span>
+                </div>
+                <div class="w-full rounded-full h-3 bg-gray-200">
+                  <div class="h-3 rounded-full" style="width:22%; background:#4A90D9;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                  <span class="font-medium text-gray-800">Other</span>
+                  <span class="font-bold text-gray-600">15%</span>
+                </div>
+                <div class="w-full rounded-full h-3 bg-gray-200">
+                  <div class="h-3 rounded-full" style="width:15%; background:#94A3B8;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Help & Resources -->
+          <div class="bg-white rounded-xl p-5 border border-gray-200" style="box-shadow: 0 1px 3px rgba(0,0,0,.04);">
+            <div class="flex items-center gap-2 mb-4">
+              <h2 class="text-base font-bold text-imf-navy">Help &amp; Resources</h2>
+            </div>
+            <div class="grid grid-cols-4 gap-3">
+              <button class="resource-btn flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 bg-white cursor-pointer">
+                <i data-lucide="book-open" class="w-[22px] h-[22px] text-imf-accent"></i>
+                <span class="text-xs font-medium text-center text-gray-800">Admin User Guide</span>
+              </button>
+              <button class="resource-btn flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 bg-white cursor-pointer">
+                <i data-lucide="video" class="w-[22px] h-[22px] text-imf-accent"></i>
+                <span class="text-xs font-medium text-center text-gray-800">How to Update Policies</span>
+              </button>
+              <button class="resource-btn flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 bg-white cursor-pointer">
+                <i data-lucide="phone" class="w-[22px] h-[22px] text-imf-accent"></i>
+                <span class="text-xs font-medium text-center text-gray-800">Contact IT Support</span>
+              </button>
+              <button class="resource-btn flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 bg-white cursor-pointer">
+                <i data-lucide="mail" class="w-[22px] h-[22px] text-imf-accent"></i>
+                <span class="text-xs font-medium text-center text-gray-800">Submit Content Request</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom padding -->
+          <div class="h-6"></div>
+
+        </div>
+      </div>
+
+      <!-- ==================== RIGHT: Copilot Panel (Empty) ==================== -->
+      <div id="copilot-panel" class="copilot-panel open flex flex-col items-center justify-center flex-shrink-0">
+        <div class="text-center p-8" style="opacity: 0.6; width: 600px;">
+          <i data-lucide="message-square" class="w-12 h-12 text-imf-accent mx-auto mb-4"></i>
+          <h3 class="text-lg font-bold text-imf-navy mb-2">AI Copilot</h3>
+          <p class="text-sm text-gray-500">Coming Soon</p>
+        </div>
+      </div>
+
+    </div><!-- end two-column row -->
+
+  </div><!-- end outer column -->
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Tab switching
+    function setTab(el) {
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.color = '#6B7280';
+      });
+      el.classList.add('active');
+      el.style.color = '#002244';
+    }
+
+    // AIDA button toggles copilot panel
+    function toggleCopilot() {
+      const panel = document.getElementById('copilot-panel');
+      const btn = document.getElementById('aida-btn');
+      panel.classList.toggle('open');
+      btn.classList.toggle('active');
+    }
+
+    // Avatar dropdown toggle
+    function toggleDropdown() {
+      document.getElementById('user-dropdown').classList.toggle('open');
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+      const btn = document.getElementById('avatar-btn');
+      const dd = document.getElementById('user-dropdown');
+      if (btn && dd && !btn.contains(e.target) && !dd.contains(e.target)) {
+        dd.classList.remove('open');
+      }
+    });
+
+    // Render star ratings
+    function renderStars(containerId, count) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      let html = '';
+      for (let i = 0; i < 5; i++) {
+        const filled = i < count;
+        html += `<svg width="14" height="14" viewBox="0 0 24 24" fill="${filled ? '#F59E0B' : 'none'}" stroke="${filled ? '#F59E0B' : '#D1D5DB'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+      }
+      el.innerHTML = html;
+    }
+
+    renderStars('stars-5', 5);
+    renderStars('stars-3', 3);
+    renderStars('stars-1', 1);
+  </script>
+</body>
+</html>
