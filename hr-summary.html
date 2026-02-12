@@ -1702,9 +1702,13 @@ function generateHRSummaryHTML() {
       <div class="flex items-center gap-2">
         <!-- Button Group -->
         <div class="inline-flex rounded-lg shadow-sm" role="group">
-          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white border-none rounded-l-lg focus:z-10" style="background:linear-gradient(135deg,#004C97,#0060BF);">
+          <!-- Save as File Split Button -->
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white border-none focus:z-10" style="background:linear-gradient(135deg,#004C97,#0060BF); border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem;">
             <i data-lucide="download" class="w-4 h-4"></i>
             Save as File
+          </button>
+          <button type="button" class="inline-flex items-center px-2 py-2 text-sm font-medium text-white border-none focus:z-10" style="background:linear-gradient(135deg,#004C97,#0060BF); border-left: 1px solid rgba(255,255,255,0.2);">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
           </button>
           <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10">
             <i data-lucide="copy" class="w-4 h-4"></i>
