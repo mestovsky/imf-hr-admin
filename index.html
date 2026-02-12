@@ -1640,12 +1640,12 @@ function renderUpToStep(step) {
   // Step 1: Empty chat with prompt cards (hidden once user sends message at step 3+)
   if (step <= 1) {
     html += `<div class="text-center pt-0 pb-4 fade-in">
-      <div class="relative inline-block mx-auto mb-4">
-        <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: cover; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0;">
+      <div class="relative inline-block mx-auto mb-4" style="width: 160px; height: 160px;">
+        <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: contain; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0;">
           <source src="icons/ai-bg-shade.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: relative; z-index: 1;">
+        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;">
           <source src="icons/ai-char-white.mp4" type="video/mp4">
           <source src="icons/ai-char-white.mov" type="video/quicktime">
           Your browser does not support the video tag.
