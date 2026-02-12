@@ -1725,78 +1725,6 @@ function generateHRSummaryHTML() {
 
     <div class="border-b border-gray-200 mb-6" style="margin-left: -1.5rem; margin-right: -1.5rem; margin-bottom: 8px;"></div>
 
-    <!-- WYSIWYG Controls -->
-    <div class="flex items-center justify-between gap-2 px-6 pb-3" style="border-bottom: 1px solid #E5E7EB; padding-top: 0.75rem; margin-left: 1.5rem; margin-right: 1.5rem;">
-      <div class="flex items-center gap-2">
-        <div class="relative">
-          <button onclick="toggleEnhanceMenu()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium cursor-pointer" style="background: white; border: 1px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg, #527FFF, #AF81FF); background-origin: border-box; background-clip: padding-box, border-box; color: #1e3a8a; font-size: 0.8rem;">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-            Enhance with AI
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
-          </button>
-
-          <div id="enhance-menu" class="hidden absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
-              Adjust to comply with IMF policies
-            </button>
-            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
-              Make text shorter
-            </button>
-            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
-              Change to tone of voice to friendly
-            </button>
-            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
-              Change to tone of voice to official
-            </button>
-            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
-              Just fix the language errors
-            </button>
-            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
-              Translate to...
-            </button>
-          </div>
-        </div>
-
-        <div class="inline-flex items-center gap-1" role="group">
-          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
-            <i data-lucide="bold" class="w-5 h-5"></i>
-          </button>
-          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
-            <i data-lucide="italic" class="w-5 h-5"></i>
-          </button>
-          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
-            <i data-lucide="underline" class="w-5 h-5"></i>
-          </button>
-
-          <div class="border-l border-gray-200" style="height: 24px;"></div>
-
-          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
-            <i data-lucide="a-large-small" class="w-5 h-5"></i>
-            <i data-lucide="chevron-down" class="w-3 h-3"></i>
-          </button>
-          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
-            <i data-lucide="paint-bucket" class="w-5 h-5"></i>
-            <i data-lucide="chevron-down" class="w-3 h-3"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="inline-flex rounded-lg shadow-sm" role="group">
-        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
-          <i data-lucide="history" class="w-4 h-4"></i>
-          Versions
-        </button>
-        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
-          <i data-lucide="quote" class="w-4 h-4"></i>
-          Citations
-        </button>
-        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
-          <i data-lucide="book-open-check" class="w-4 h-4"></i>
-          Provenance
-        </button>
-      </div>
-    </div>
-
     <!-- Summary Document Container -->
     <div class="bg-white rounded-lg border border-gray-200 mb-4" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-left: 3rem; margin-right: 3rem; margin-top: 3rem;">
 
@@ -1807,6 +1735,78 @@ function generateHRSummaryHTML() {
             <h3 class="text-2xl font-bold text-gray-900 mb-1">Weekly HR Summary</h3>
             <p class="text-sm text-gray-500">Period: February 5-12, 2026</p>
           </div>
+        </div>
+      </div>
+
+      <!-- WYSIWYG Controls -->
+      <div class="flex items-center justify-between gap-2 px-8 py-3" style="border-bottom: 1px solid #E5E7EB; background: white;">
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <button onclick="toggleEnhanceMenu()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium cursor-pointer" style="background: white; border: 1px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg, #527FFF, #AF81FF); background-origin: border-box; background-clip: padding-box, border-box; color: #1e3a8a; font-size: 0.8rem;">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              Enhance with AI
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+            </button>
+
+            <div id="enhance-menu" class="hidden absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+                Adjust to comply with IMF policies
+              </button>
+              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+                Make text shorter
+              </button>
+              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+                Change to tone of voice to friendly
+              </button>
+              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+                Change to tone of voice to official
+              </button>
+              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+                Just fix the language errors
+              </button>
+              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+                Translate to...
+              </button>
+            </div>
+          </div>
+
+          <div class="inline-flex items-center gap-1" role="group">
+            <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+              <i data-lucide="bold" class="w-5 h-5"></i>
+            </button>
+            <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+              <i data-lucide="italic" class="w-5 h-5"></i>
+            </button>
+            <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+              <i data-lucide="underline" class="w-5 h-5"></i>
+            </button>
+
+            <div class="border-l border-gray-200" style="height: 24px;"></div>
+
+            <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
+              <i data-lucide="a-large-small" class="w-5 h-5"></i>
+              <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+            <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
+              <i data-lucide="paint-bucket" class="w-5 h-5"></i>
+              <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="inline-flex rounded-lg shadow-sm" role="group">
+          <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+            <i data-lucide="history" class="w-4 h-4"></i>
+            Versions
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+            <i data-lucide="quote" class="w-4 h-4"></i>
+            Citations
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+            <i data-lucide="book-open-check" class="w-4 h-4"></i>
+            Provenance
+          </button>
         </div>
       </div>
 
@@ -1936,16 +1936,16 @@ function generateHRSummaryHTML() {
         <div class="bg-white rounded-lg border border-gray-300 p-4 mb-3" style="box-shadow: 0 1px 3px rgba(0,0,0,.05);">
           <div class="flex items-start justify-between mb-3">
             <div class="flex items-center gap-2">
-              <span class="tag" style="background:rgba(251,191,36,0.15); color:#B45309;">🎫 REQ0012345</span>
-              <span class="tag" style="background:#FEF3C7; color:#92400E;">High Priority</span>
+              <span class="tag" style="background:transparent; border: 1px solid #D1D5DB; color:#6B7280; font-size: 12px;">🎫 REQ0012345</span>
+              <span class="tag" style="background:#FEF3C7; color:#92400E; font-size: 12px;">High Priority</span>
             </div>
             <span class="text-xs text-gray-500">2 hours ago</span>
           </div>
           <h5 class="font-semibold text-gray-900 mb-2">Parental Leave Extension - Medical Circumstances</h5>
           <p class="text-sm text-gray-600 mb-3">Employee requesting 8-week parental leave extension due to postpartum medical complications. Requires policy review and medical documentation verification.</p>
           <div class="flex items-center gap-2">
-            <span class="tag" style="background:#EBF3FE; color:#004C97; font-size: 11px;">Finance Dept</span>
-            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 11px;">Case #2023-045 Referenced</span>
+            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 12px;">Finance Dept</span>
+            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 12px;">Case #2023-045 Referenced</span>
           </div>
         </div>
 
@@ -1953,16 +1953,16 @@ function generateHRSummaryHTML() {
         <div class="bg-white rounded-lg border border-gray-300 p-4 mb-3" style="box-shadow: 0 1px 3px rgba(0,0,0,.05);">
           <div class="flex items-start justify-between mb-3">
             <div class="flex items-center gap-2">
-              <span class="tag" style="background:rgba(251,191,36,0.15); color:#B45309;">🎫 REQ0012346</span>
-              <span class="tag" style="background:#FEF3C7; color:#92400E;">High Priority</span>
+              <span class="tag" style="background:transparent; border: 1px solid #D1D5DB; color:#6B7280; font-size: 12px;">🎫 REQ0012346</span>
+              <span class="tag" style="background:#FEF3C7; color:#92400E; font-size: 12px;">High Priority</span>
             </div>
             <span class="text-xs text-gray-500">4 hours ago</span>
           </div>
           <h5 class="font-semibold text-gray-900 mb-2">Remote Work Arrangement - International Assignment</h5>
           <p class="text-sm text-gray-600 mb-3">Staff member requesting permanent remote work from overseas location. Tax implications and policy compliance review required.</p>
           <div class="flex items-center gap-2">
-            <span class="tag" style="background:#EBF3FE; color:#004C97; font-size: 11px;">Operations</span>
-            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 11px;">Policy Section 5.3.2</span>
+            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 12px;">Operations</span>
+            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 12px;">Policy Section 5.3.2</span>
           </div>
         </div>
 
@@ -1970,16 +1970,16 @@ function generateHRSummaryHTML() {
         <div class="bg-white rounded-lg border border-gray-300 p-4" style="box-shadow: 0 1px 3px rgba(0,0,0,.05);">
           <div class="flex items-start justify-between mb-3">
             <div class="flex items-center gap-2">
-              <span class="tag" style="background:rgba(251,191,36,0.15); color:#B45309;">🎫 REQ0012347</span>
-              <span class="tag" style="background:#DBEAFE; color:#1E40AF;">Medium Priority</span>
+              <span class="tag" style="background:transparent; border: 1px solid #D1D5DB; color:#6B7280; font-size: 12px;">🎫 REQ0012347</span>
+              <span class="tag" style="background:#DBEAFE; color:#1E40AF; font-size: 12px;">Medium Priority</span>
             </div>
             <span class="text-xs text-gray-500">1 day ago</span>
           </div>
           <h5 class="font-semibold text-gray-900 mb-2">Compensation Adjustment Request</h5>
           <p class="text-sm text-gray-600 mb-3">Mid-year salary review request based on expanded role responsibilities and market benchmarking data.</p>
           <div class="flex items-center gap-2">
-            <span class="tag" style="background:#EBF3FE; color:#004C97; font-size: 11px;">Technology</span>
-            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 11px;">Compensation Policy 2026</span>
+            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 12px;">Technology</span>
+            <span class="tag" style="background:#F1F5F9; color:#64748B; font-size: 12px;">Compensation Policy 2026</span>
           </div>
         </div>
       </div>
