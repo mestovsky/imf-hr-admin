@@ -249,7 +249,7 @@
 </head>
 <body>
 <!-- Background iframe for side panel mode -->
-<iframe id="background-iframe" class="background-iframe" src="index.html"></iframe>
+<iframe id="background-iframe" class="background-iframe" src="index-old.html"></iframe>
 
 <div id="app-container" class="flex h-screen overflow-hidden">
 
@@ -430,7 +430,7 @@
         <button id="side-panel-nav-btn" onclick="toggleSidebar()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-500" style="display:none;" title="Expand navigation">
           <i data-lucide="panel-left" class="w-[18px] h-[18px]"></i>
         </button>
-        <h1 id="conv-title" class="text-sm font-semibold text-gray-800">New chat</h1>
+        <h1 id="conv-title" class="text-base font-semibold text-gray-800">New chat</h1>
       </div>
       <div class="flex items-center gap-1.5">
         <button onclick="prevStep()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Previous step"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
@@ -1586,13 +1586,13 @@ function generateCasePreviewHTML(caseId) {
 
       <!-- Auto-suggestions -->
       <div class="flex gap-3 mb-4">
-        <button onclick="openDraftEmailCanvas()" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
+        <button onclick="openDraftEmailCanvas()" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl cursor-pointer transition-all" style="background: linear-gradient(135deg, rgba(167, 139, 250, 0.08) 0%, rgba(139, 192, 246, 0.08) 100%); border: 1px solid rgba(167, 139, 250, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
           <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
-          <span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Generate a draft response email based on this case</span>
+          <span class="text-left" style="font-size: 0.9rem; line-height: 1.25rem; font-weight: 400; color: #374151;">Generate a draft response email based on this case</span>
         </button>
-        <button onclick="fillPrompt('Generate a draft request to retrieve medical documents')" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
+        <button onclick="fillPrompt('Generate a draft request to retrieve medical documents')" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl cursor-pointer transition-all" style="background: linear-gradient(135deg, rgba(167, 139, 250, 0.08) 0%, rgba(139, 192, 246, 0.08) 100%); border: 1px solid rgba(167, 139, 250, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
           <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
-          <span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Generate a draft request to retrieve medical documents</span>
+          <span class="text-left" style="font-size: 0.9rem; line-height: 1.25rem; font-weight: 400; color: #374151;">Generate a draft request to retrieve medical documents</span>
         </button>
       </div>
 
@@ -1639,13 +1639,13 @@ function renderUpToStep(step) {
 
   // Step 1: Empty chat with prompt cards (hidden once user sends message at step 3+)
   if (step <= 1) {
-    html += `<div class="text-center pt-0 pb-4 fade-in">
-      <div class="relative inline-block mx-auto mb-4" style="width: 160px; height: 160px;">
-        <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: contain; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0;">
-          <source src="icons/ai-bg-shade.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;">
+    html += `<div class="text-center pt-0 pb-4 fade-in" style="position: relative;">
+      <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: contain; top: 0; left: 50%; transform: translateX(-50%); z-index: 0; pointer-events: none; opacity: 0.6;">
+        <source src="icons/ai-bg-shade.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="relative inline-block mx-auto" style="width: 160px; height: 160px; z-index: 1; margin-bottom: -1rem;">
+        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
           <source src="icons/ai-char-white.mp4" type="video/mp4">
           <source src="icons/ai-char-white.mov" type="video/quicktime">
           Your browser does not support the video tag.
@@ -1654,7 +1654,7 @@ function renderUpToStep(step) {
           <i data-lucide="sparkles" class="w-8 h-8" style="color:#fff;"></i>
         </div>
       </div>
-      <h2 class="font-semibold text-gray-800 mb-1" style="font-size: 1.7rem;">Hi John, how can I help you today?</h2>
+      <h2 class="font-semibold text-gray-800 mb-1" style="font-size: 1.7rem; position: relative; z-index: 1;">Hi John, how can I help you today?</h2>
     </div>`;
     if (step === 0) html += promptCards();
   }
@@ -1967,7 +1967,7 @@ function renderUpToStep(step) {
           <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
         </span>
       </div>
-      <p class="mb-3">I updated ServiceNow ticket <a href="#" class="text-imf-blue hover:underline font-medium">REQ0012345</a> and included the sent message there.</p>
+      <p class="mb-3">Email was successfully sent. I updated ServiceNow ticket <a href="#" class="text-imf-blue hover:underline font-medium">REQ0012345</a> and included the sent message there too.</p>
       <div class="flex flex-wrap gap-2 mb-3">
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
           Open in ServiceNow
