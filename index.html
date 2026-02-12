@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMF AIDA &mdash; HR Policy Research</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] },
+          colors: {
+            imf: { navy: '#001D3D', blue: '#004C97', accent: '#4A90D9', light: '#EBF3FE', warm: '#F8FAFC' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: #1E293B; position: relative; }
+
+    /* Side panel mode */
+    .background-iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: 0;
+      display: none;
+    }
+    .background-iframe.active {
+      display: block;
+      filter: blur(8px);
+    }
+    #app-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      height: 100vh;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    #app-container.side-panel-mode {
+      margin-left: auto;
+      width: 600px;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+    }
+
+    /* Scrollbar */
+    .scroll-y::-webkit-scrollbar { width: 5px; }
+    .scroll-y::-webkit-scrollbar-track { background: transparent; }
+    .scroll-y::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 340px;
+      min-width: 340px;
+      transition: width 0.3s cubic-bezier(0.4,0,0.2,1), min-width 0.3s cubic-bezier(0.4,0,0.2,1), padding 0.3s ease;
+      background: linear-gradient(175deg, #004C97 0%, #001D3D 100%);
+    }
+    .sidebar.collapsed { width: 0; min-width: 0; padding: 0; overflow: hidden; }
+    .sidebar.collapsed * { opacity: 0; pointer-events: none; }
+
+    /* Canvas (right panel) */
+    .canvas-panel {
+      width: 0; min-width: 0; overflow: hidden; opacity: 0;
+      border-left: 0 solid #E2E8F0;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease, min-width 0.35s ease, border-left-width 0.2s ease;
+    }
+    .canvas-panel.open { width: 70%; min-width: 70%; opacity: 1; border-left-width: 1px; }
+
+    /* Case Preview Panel */
+    .case-preview-panel {
+      width: 0; min-width: 0; overflow: hidden; opacity: 0;
+      border-left: 0 solid #E2E8F0;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease, min-width 0.35s ease, border-left-width 0.2s ease;
+    }
+    .case-preview-panel.open { width: 760px; min-width: 760px; opacity: 1; border-left-width: 1px; }
+
+    /* Conversation item — white card style */
+    .conv-item { transition: all 0.12s ease; background: rgba(255,255,255,0.08); border: none; border-left: 3px solid transparent; }
+    .conv-item:hover { background: rgba(255,255,255,0.14); }
+    .conv-item.active { background: #fff; border: none; border-left: 3px solid #C239B3; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .conv-item p { font-size: 0.81rem; }
+    .conv-item.active p { color: #1E293B !important; }
+    /* Reduce spacing between conversation items */
+    #chats-section-list > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem !important; }
+    /* Tags in conversation items - smaller font */
+    .conv-item .tag { font-size: 10px; }
+    /* Ticket tag (first tag) - outlined style */
+    .conv-item .tag:first-child { background: transparent !important; border: 1px solid rgba(251,191,36,0.5); color: #FCD34D !important; }
+    .conv-item.active .tag:first-child { background: transparent !important; border: 1px solid #F59E0B; color: #D97706 !important; }
+    /* Status tag (last tag) - filled style */
+    .conv-item.active .tag:last-child { background: rgba(59,130,246,0.15) !important; color: #2563EB !important; }
+    .conv-item.filtered-out { display: none; }
+
+    /* Nav link active state */
+    .nav-link {
+      transition: all 0.12s ease;
+      border-radius: 8px;
+      padding-left: 0.75rem;
+    }
+    .nav-link.active {
+      background: rgba(255,255,255,0.95) !important;
+      color: #1E293B !important;
+      border-left: 3px solid #C239B3 !important;
+      padding-left: 0.75rem !important;
+      box-sizing: border-box !important;
+    }
+    .nav-link.active svg, .nav-link.active i { color: #1E293B !important; stroke: #1E293B !important; }
+
+    /* Filter chip */
+    .filter-chip { transition: all 0.15s ease; border: 1px solid rgba(255,255,255,0.2); }
+    .filter-chip.active { background: rgba(255,255,255,0.2) !important; color: #fff !important; border-color: transparent; }
+    .filter-chip:hover:not(.active) { background: rgba(255,255,255,0.08); }
+
+    /* Chat bubbles */
+    .bubble-user {
+      background: linear-gradient(135deg, #004C97, #0060BF);
+      color: #fff; border-radius: 18px 18px 4px 18px;
+    }
+    .bubble-ai {
+      background: transparent; color: #1E293B; border-radius: 0;
+      border: none; box-shadow: none;
+    }
+
+    /* Typing dots */
+    @keyframes blink { 0%,80%,100%{opacity:.3} 40%{opacity:1} }
+    .dot { animation: blink 1.4s infinite both; }
+    .dot:nth-child(2) { animation-delay: .2s; }
+    .dot:nth-child(3) { animation-delay: .4s; }
+
+    /* Rich card */
+    .rich-card {
+      border: 1px solid #E2E8F0; border-radius: 12px; background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04); transition: box-shadow 0.15s ease;
+    }
+    .rich-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.07); }
+
+    /* Tag */
+    .tag { font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; border: none; }
+
+    /* Step indicator */
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #E2E8F0; transition: all 0.2s ease; cursor: pointer; }
+    .step-dot.active { background: #004C97; box-shadow: 0 0 0 3px rgba(0,76,151,0.2); }
+    .step-dot.done { background: #34D399; }
+
+    /* Input container focus state */
+    .chat-input-container { transition: border-color 0.2s ease; }
+    .chat-input-container:focus-within { border-color: #2256A6 !important; }
+    .chat-input:focus { outline: none; }
+
+    /* Prompt cards - stack vertically in side panel mode */
+    #app-container.side-panel-mode .prompt-cards-container {
+      flex-direction: column !important;
+    }
+
+    /* Prompt cards - inline icon layout in side panel mode */
+    #app-container.side-panel-mode .prompt-cards-container .act-btn {
+      flex-direction: row !important;
+      align-items: center !important;
+    }
+
+    /* Center initial greeting vertically on steps 0-1 in full screen mode */
+    #chat-feed.center-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #chat-feed.center-content #messages {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    /* Action button */
+    .act-btn { transition: all 0.15s ease; }
+    .act-btn:hover { background: #EBF3FE !important; border-color: #4A90D9 !important; }
+
+    /* Smooth content appearance */
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Checkbox */
+    .chk { accent-color: #004C97; }
+
+    /* Select dropdown */
+    .sel-menu { display:none; }
+    .sel-menu.open { display:block; }
+
+    /* Accordion */
+    .accordion-collapsed { display: none; }
+    .chevron-rotated { transform: rotate(-90deg); transition: transform 0.2s ease; }
+    .chevron-normal { transform: rotate(0deg); transition: transform 0.2s ease; }
+
+    /* Tools Modal Tabs */
+    .tools-tab {
+      background: transparent;
+      color: #6B7280;
+      border: none;
+      cursor: pointer;
+    }
+
+    .tools-tab:hover {
+      background: #E5E7EB;
+      color: #374151;
+    }
+
+    .tools-tab.active {
+      background: #E5E7EB;
+      color: #004C97;
+      font-weight: 600;
+      border-left: 3px solid #004C97;
+    }
+
+    .tools-content {
+      display: block;
+    }
+
+    .tools-content.hidden {
+      display: none;
+    }
+
+    /* Modal overlay animations */
+    #tools-modal-overlay {
+      animation: fadeInOverlay 0.2s ease;
+    }
+
+    @keyframes fadeInOverlay {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #tools-modal-overlay > div {
+      animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+<!-- Background iframe for side panel mode -->
+<iframe id="background-iframe" class="background-iframe" src="index.html"></iframe>
+
+<div id="app-container" class="flex h-screen overflow-hidden">
+
+  <!-- ============================== LEFT SIDEBAR ============================== -->
+  <aside id="sidebar" class="sidebar flex flex-col py-4 px-3 flex-shrink-0 overflow-hidden">
+
+    <!-- Logo + Collapse toggle -->
+    <div class="mb-4 flex-shrink-0">
+      <div class="flex items-center justify-between px-2 pb-4">
+        <span class="text-white" style="font-size:1.75rem; line-height:1;"><b style="font-weight:700;">IMF</b> <span style="font-weight:400;">AIDA</span></span>
+        <button onclick="toggleSidebar()" class="p-1.5 rounded-md bg-transparent border-none cursor-pointer" style="color:rgba(255,255,255,0.5);" onmouseenter="this.style.color='#fff';this.style.background='rgba(255,255,255,0.1)'" onmouseleave="this.style.color='rgba(255,255,255,0.5)';this.style.background='transparent'" title="Collapse sidebar">
+          <i data-lucide="panel-left" class="w-[18px] h-[18px]"></i>
+        </button>
+      </div>
+
+      <!-- Separator line -->
+      <div class="mb-4" style="height: 1px; background: rgba(255,255,255,0.1);"></div>
+
+      <!-- Agent label -->
+      <button onclick="toggleAccordion('agent-section')" class="w-full flex items-center justify-between px-2 mb-1.5 mt-3 bg-transparent border-none cursor-pointer text-left">
+        <p class="text-[10px] font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.4);">Agent</p>
+        <i id="agent-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.4);"></i>
+      </button>
+
+      <!-- Module selector -->
+      <div id="agent-section" class="relative" id="module-sel">
+        <button onclick="document.getElementById('sel-dd').classList.toggle('open')" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left cursor-pointer border-none" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.9);">
+          <i data-lucide="book-open-check" class="w-4 h-4 flex-shrink-0" style="color:rgba(255,255,255,0.6);"></i>
+          <span class="flex-1 truncate" id="sel-label">HR Policy Research</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(255,255,255,0.4);"></i>
+        </button>
+        <div id="sel-dd" class="sel-menu absolute left-0 right-0 mt-1 rounded-lg py-1 z-50" style="background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.18); border:1px solid #E2E8F0;">
+          <div class="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Switch Module</div>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="book-open-check" class="w-4 h-4 text-imf-accent"></i>HR Policy Research</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="scale" class="w-4 h-4 text-imf-accent"></i>Ethics Guide</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="plane" class="w-4 h-4 text-imf-accent"></i>Travel Guide</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="landmark" class="w-4 h-4 text-imf-accent"></i>Surveillance &amp; Lending Hub</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="shield-check" class="w-4 h-4 text-imf-accent"></i>Fin Safeguard</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="file-text" class="w-4 h-4 text-imf-accent"></i>TA Report Copilot</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="gavel" class="w-4 h-4 text-imf-accent"></i>SEC Board Keeper</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="scan-search" class="w-4 h-4 text-imf-accent"></i>Analyze Documents</button>
+          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="languages" class="w-4 h-4 text-imf-accent"></i>Translate Documents</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation links -->
+    <div id="agent-section-nav" class="flex-shrink-0 px-1 mb-4">
+      <button id="new-chat-link" onclick="goToStep(0)" class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
+        <i data-lucide="message-circle" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
+        <span>New chat</span>
+      </button>
+      <button class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
+        <i data-lucide="search" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
+        <span>Search & Explore</span>
+      </button>
+      <button class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
+        <i data-lucide="list-todo" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
+        <span>Inquiries</span>
+      </button>
+      <button class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
+        <i data-lucide="layout-template" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
+        <span>Templates</span>
+      </button>
+    </div>
+
+    <!-- Separator line -->
+    <div class="mb-4 flex-shrink-0" style="height: 1px; background: rgba(255,255,255,0.1);"></div>
+
+    <!-- Chats label -->
+    <button onclick="toggleAccordion('chats-section')" class="w-full flex items-center justify-between px-2 mb-2 flex-shrink-0 bg-transparent border-none cursor-pointer text-left">
+      <p class="text-[10px] font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.6);">Chats</p>
+      <i id="chats-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.4);"></i>
+    </button>
+
+    <!-- Filter chips -->
+    <div id="chats-section-filters" class="flex gap-1.5 mb-3 px-1 flex-shrink-0">
+      <button onclick="setFilter(this,'all')" class="filter-chip active text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">All</button>
+      <button onclick="setFilter(this,'cases')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Cases</button>
+      <button onclick="setFilter(this,'chats')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Chats</button>
+      <button onclick="setFilter(this,'open')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Open</button>
+      <button onclick="setFilter(this,'closed')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Closed</button>
+    </div>
+
+    <!-- Conversations list -->
+    <div id="chats-section-list" class="flex-1 overflow-y-auto scroll-y space-y-1.5 px-1" id="conv-list">
+      <div class="text-[10px] font-semibold uppercase tracking-wider px-2 pt-2 pb-1 conv-date-header" style="color:rgba(255,255,255,0.35);">Today</div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="open" onclick="goToStep(1)">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Parental leave extension precedents</p>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0012345</span>
+          <span class="tag" style="background:rgba(59,130,246,0.2); color:#93C5FD;">In Progress</span>
+        </div>
+      </div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Remote work policy for Grade P3</p>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="tag flex items-center gap-1" style="background:transparent !important; color:rgba(255,255,255,0.9) !important; border: 1px solid rgba(255,255,255,0.3) !important;"><img src="icons/teams_24x1.svg" class="w-3 h-3" alt="" />Teams</span>
+          <span class="tag" style="background:rgba(52,211,153,0.2); color:#6EE7B7;">Resolved</span>
+        </div>
+      </div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="open">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Telework exceptions during mission travel</p>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="tag flex items-center gap-1" style="background:transparent !important; color:rgba(255,255,255,0.9) !important; border: 1px solid rgba(255,255,255,0.3) !important;"><img src="icons/outlook_24x1.svg" class="w-3 h-3" alt="" />Outlook</span>
+          <span class="tag" style="background:rgba(148,163,184,0.25); color:#CBD5E1;">Draft</span>
+        </div>
+      </div>
+
+      <div class="text-[10px] font-semibold uppercase tracking-wider px-2 pt-4 pb-1 conv-date-header" style="color:rgba(255,255,255,0.35);">Yesterday</div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="chat" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Per diem rates comparison &mdash; Africa region</p>
+      </div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Salary advance policy clarification</p>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011987</span>
+          <span class="tag" style="background:rgba(248,113,113,0.25); color:#FCA5A5;">Escalated</span>
+        </div>
+      </div>
+
+      <div class="text-[10px] font-semibold uppercase tracking-wider px-2 pt-4 pb-1 conv-date-header" style="color:rgba(255,255,255,0.35);">Last 7 Days</div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="chat" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Education grant eligibility &mdash; multiple dependents</p>
+      </div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Medical leave accrual during external service</p>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011842</span>
+          <span class="tag" style="background:rgba(52,211,153,0.2); color:#6EE7B7;">Resolved</span>
+        </div>
+      </div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="chat" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Hardship allowance recalculation request</p>
+      </div>
+
+      <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Spouse employment exemption precedents</p>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011790</span>
+          <span class="tag" style="background:rgba(52,211,153,0.2); color:#6EE7B7;">Resolved</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- User block -->
+    <div class="flex-shrink-0 mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+      <div class="flex items-center gap-2.5 px-2">
+        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover flex-shrink-0" style="border: 2px solid rgba(255,255,255,0.2);" />
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-white truncate">John Miller</p>
+          <p class="text-[11px] truncate" style="color:rgba(255,255,255,0.45);">HR Policy Officer</p>
+        </div>
+        <button class="ml-auto p-1.5 rounded-md bg-transparent border-none cursor-pointer" style="color:rgba(255,255,255,0.4);" title="Settings">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================== MAIN AREA ============================== -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Top bar -->
+    <header class="h-13 flex items-center justify-between px-5 flex-shrink-0 bg-white border-b border-gray-200" style="height:52px;">
+      <div class="flex items-center gap-3">
+        <button id="header-toggle-btn" onclick="toggleSidebar()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-500" style="display:none;" title="Toggle sidebar">
+          <i data-lucide="panel-left" class="w-[18px] h-[18px]"></i>
+        </button>
+        <button id="side-panel-nav-btn" onclick="toggleSidebar()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-500" style="display:none;" title="Expand navigation">
+          <i data-lucide="panel-left" class="w-[18px] h-[18px]"></i>
+        </button>
+        <h1 id="conv-title" class="text-sm font-semibold text-gray-800">New chat</h1>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button onclick="prevStep()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Previous step"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <span class="text-xs font-medium text-gray-500 min-w-[80px] text-center" id="step-label">Step 1 of 10</span>
+        <button onclick="nextStep()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Next step"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+        <!-- Minimize/Maximize button -->
+        <div class="ml-2 pl-2" style="border-left: 1px solid #E5E7EB;">
+          <button id="panel-toggle-btn" onclick="togglePanelMode()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Minimize to side panel">
+            <i data-lucide="minimize" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Chat + Canvas row -->
+    <div class="flex flex-1 min-h-0">
+
+      <!-- ============================== CHAT AREA ============================== -->
+      <div class="flex-1 flex flex-col min-w-0" style="background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);">
+        <div class="flex-1 relative">
+          <div id="chat-feed" class="absolute inset-0 overflow-y-auto scroll-y px-6 py-6">
+            <div class="max-w-[760px] mx-auto space-y-5" id="messages"></div>
+          </div>
+          <!-- Scroll gradient overlay -->
+          <div id="scroll-gradient" class="pointer-events-none absolute bottom-0 left-0 right-0 h-32 opacity-0 transition-opacity duration-300" style="background: linear-gradient(to top, rgba(241,245,249,1) 0%, rgba(241,245,249,0) 100%);"></div>
+        </div>
+
+        <!-- Input area (bottom fixed - shown from step 3+) -->
+        <div id="bottom-input-area" class="flex-shrink-0 px-6 pb-5 pt-2" style="display: none;">
+          <div class="max-w-[760px] mx-auto">
+            <!-- Active filter tags (shown in step 6+) -->
+            <div id="filter-tags" class="hidden flex-wrap gap-1.5 mb-2"></div>
+            <div class="chat-input-container bg-white rounded-2xl px-4 py-3 border border-gray-200" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+              <textarea id="chat-input" rows="2" placeholder="Ask me about HR policies, precedents, or cases..." class="chat-input w-full text-sm border-none outline-none bg-transparent text-gray-800 resize-none mb-2" style="line-height: 1.5;" autofocus></textarea>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1">
+                  <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="paperclip" class="w-[18px] h-[18px]"></i></button>
+                  <button onclick="openToolsModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="sliders-horizontal" class="w-[18px] h-[18px]"></i><span class="text-sm">Tools</span></button>
+                  <div id="ticket-chip-bottom" class="hidden"></div>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="mic" class="w-[18px] h-[18px]"></i></button>
+                  <button id="send-stop-btn" onclick="nextStep()" class="p-2 rounded-xl border-none cursor-pointer text-white flex-shrink-0" style="background:linear-gradient(135deg,#004C97,#0060BF);"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
+                </div>
+              </div>
+            </div>
+            <p class="text-[11px] mt-2 text-center" style="color: #6B7785; font-weight: 300 !important;">AIDA may produce inaccurate information. Always verify it and align to IMF policies.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================== CASE PREVIEW PANEL ============================== -->
+      <div id="case-preview-panel" class="case-preview-panel flex flex-col bg-white">
+        <div id="case-preview-content" class="flex-1 overflow-y-auto scroll-y p-6" style="width:760px;"></div>
+      </div>
+
+      <!-- ============================== CANVAS PANEL ============================== -->
+      <div id="canvas-panel" class="canvas-panel flex flex-col bg-white">
+        <div id="canvas-content" class="flex-1 overflow-y-auto scroll-y p-6"></div>
+      </div>
+
+    </div>
+
+    <!-- ============================== TOOLS MODAL ============================== -->
+    <div id="tools-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" style="z-index: 1000;" onclick="closeToolsModal(event)">
+      <div class="bg-white rounded-xl shadow-2xl flex flex-col" style="width: 800px; max-height: 600px;" onclick="event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-800">Research Tools</h3>
+          <button onclick="closeToolsModal()" class="p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body - Two Columns -->
+        <div class="flex flex-1 overflow-hidden">
+          <!-- Left Column: Tabs -->
+          <div class="w-48 border-r border-gray-200 bg-gray-50 p-4 space-y-1">
+            <button id="tab-filter" onclick="switchToolsTab('filter')" class="tools-tab active w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Filter the results
+            </button>
+            <button id="tab-relevance" onclick="switchToolsTab('relevance')" class="tools-tab w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Relevance
+            </button>
+            <button id="tab-sources" onclick="switchToolsTab('sources')" class="tools-tab w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Sources
+            </button>
+          </div>
+
+          <!-- Right Column: Content -->
+          <div class="flex-1 overflow-y-auto p-6">
+            <!-- Filter Tab Content -->
+            <div id="content-filter" class="tools-content">
+              <!-- Date Range -->
+              <div class="mb-6">
+                <label class="block text-gray-700 mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03rem;">DATE RANGE</label>
+                <div class="flex items-center gap-3">
+                  <input type="text" placeholder="01/02/2024" class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-imf-accent">
+                  <span class="text-sm text-gray-400">to</span>
+                  <input type="text" placeholder="01/02/2025" class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-imf-accent">
+                </div>
+              </div>
+
+              <!-- Department -->
+              <div class="mb-6">
+                <label class="block text-gray-700 mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03rem;">DEPARTMENT</label>
+                <select class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-imf-accent bg-white">
+                  <option>All Departments</option>
+                  <option>Finance</option>
+                  <option>Research</option>
+                  <option>IT Services</option>
+                  <option>Legal</option>
+                  <option>Communications</option>
+                </select>
+              </div>
+
+              <!-- Case Type -->
+              <div class="mb-6">
+                <label class="block text-gray-700 mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03rem;">CASE TYPE</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                    <span class="text-sm text-gray-700">Medical complications</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                    <span class="text-sm text-gray-700">Multiple births</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                    <span class="text-sm text-gray-700">International assignments</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Approval Level -->
+              <div class="mb-6">
+                <label class="block text-gray-700 mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03rem;">APPROVAL LEVEL</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="approval" class="w-4 h-4 border-gray-300 text-imf-blue focus:ring-imf-blue">
+                    <span class="text-sm text-gray-700">Any</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="approval" class="w-4 h-4 border-gray-300 text-imf-blue focus:ring-imf-blue">
+                    <span class="text-sm text-gray-700">HR Director</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="approval" class="w-4 h-4 border-gray-300 text-imf-blue focus:ring-imf-blue">
+                    <span class="text-sm text-gray-700">Division Chief</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Relevance Tab Content -->
+            <div id="content-relevance" class="tools-content hidden">
+              <div class="mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                  <label class="text-gray-700" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03rem;">MIN. RELEVANCE %</label>
+                  <button class="p-1 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer" title="Set the minimum relevance score for search results">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                <div class="space-y-3">
+                  <input type="range" min="0" max="100" value="75" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-imf-accent" id="relevance-slider">
+                  <div class="flex justify-between text-xs text-gray-500">
+                    <span>0%</span>
+                    <span id="relevance-value" class="font-semibold text-imf-accent">75%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sources Tab Content -->
+            <div id="content-sources" class="tools-content hidden">
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">OneDrive / SharePoint</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">ServiceNow</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">Outlook (Ethics Inbox)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">Outlook (HR Inbox)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">PeopleSoft</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">Nexus</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">Caseload Manager</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked class="w-4 h-4 rounded border-2 border-gray-300 cursor-pointer" style="accent-color: #004C97;">
+                  <span class="text-sm text-gray-700">HRD Excel Tracker</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+          <button onclick="closeToolsModal()" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg bg-transparent border border-gray-300 cursor-pointer">
+            Cancel
+          </button>
+          <button onclick="applyToolsFilters()" class="px-4 py-2 text-sm font-medium text-white rounded-lg cursor-pointer border-none" style="background:linear-gradient(135deg,#004C97,#0060BF);">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================== CHECKLIST MODAL ============================== -->
+    <div id="checklist-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" style="z-index: 1000;" onclick="closeChecklistModal(event)">
+      <div class="bg-white rounded-xl shadow-2xl" style="width: 500px;" onclick="event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-800">Pre-send Checklist</h3>
+          <button onclick="closeChecklistModal()" class="p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-6 space-y-4">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="check-1" checked class="mt-1 w-4 h-4 rounded border-2 border-gray-300 text-imf-accent focus:ring-2 focus:ring-imf-accent cursor-pointer" style="accent-color: #004C97;">
+            <span class="text-gray-800 flex-1" style="font-size: 0.9rem;">I have reviewed the draft content</span>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="check-2" checked class="mt-1 w-4 h-4 rounded border-2 border-gray-300 text-imf-accent focus:ring-2 focus:ring-imf-accent cursor-pointer" style="accent-color: #004C97;">
+            <span class="text-gray-800 flex-1" style="font-size: 0.9rem;">Precedents cited are applicable</span>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="check-3" checked class="mt-1 w-4 h-4 rounded border-2 border-gray-300 text-imf-accent focus:ring-2 focus:ring-imf-accent cursor-pointer" style="accent-color: #004C97;">
+            <span class="text-gray-800 flex-1" style="font-size: 0.9rem;">Employee details are correct</span>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="check-4" class="mt-1 w-4 h-4 rounded border-2 border-gray-300 text-imf-accent focus:ring-2 focus:ring-imf-accent cursor-pointer" style="accent-color: #004C97;">
+            <span class="text-gray-800 flex-1" style="font-size: 0.9rem;">This aligns with current HR policy</span>
+          </label>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+          <button onclick="closeChecklistModal()" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg bg-transparent border border-gray-300 cursor-pointer">
+            Cancel
+          </button>
+          <button onclick="confirmSendEmail()" class="px-4 py-2 text-sm font-medium text-white rounded-lg cursor-pointer border-none" style="background:linear-gradient(135deg,#004C97,#0060BF);">
+            Send Email
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+/* ────── State ────── */
+let currentStep = 0;
+const totalSteps = 7;
+
+/* ────── Tools Modal Functions ────── */
+function openToolsModal() {
+  const modal = document.getElementById('tools-modal-overlay');
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+  // Initialize slider listener if on relevance tab
+  const slider = document.getElementById('relevance-slider');
+  if (slider) {
+    slider.addEventListener('input', updateRelevanceValue);
+  }
+
+  lucide.createIcons(); // Re-render lucide icons
+}
+
+function closeToolsModal(event) {
+  // Only close if clicking overlay or close button, not modal content
+  if (event && event.target !== event.currentTarget && !event.target.closest('button[onclick*="closeToolsModal"]')) return;
+
+  const modal = document.getElementById('tools-modal-overlay');
+  modal.classList.add('hidden');
+  document.body.style.overflow = ''; // Restore scrolling
+}
+
+function switchToolsTab(tabName) {
+  // Update tab buttons
+  document.querySelectorAll('.tools-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  document.getElementById('tab-' + tabName).classList.add('active');
+
+  // Update content panels
+  document.querySelectorAll('.tools-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+  document.getElementById('content-' + tabName).classList.remove('hidden');
+
+  lucide.createIcons(); // Re-render icons for new content
+}
+
+function updateRelevanceValue() {
+  const slider = document.getElementById('relevance-slider');
+  const valueDisplay = document.getElementById('relevance-value');
+  if (slider && valueDisplay) {
+    valueDisplay.textContent = slider.value + '%';
+  }
+}
+
+/* ────── Checklist Modal Functions ────── */
+function openChecklistModal() {
+  const modal = document.getElementById('checklist-modal-overlay');
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeChecklistModal(event) {
+  // Only close if clicking overlay or explicit close button
+  if (event && event.target !== event.currentTarget && !event.target.closest('button[onclick*="closeChecklistModal"]')) return;
+
+  const modal = document.getElementById('checklist-modal-overlay');
+  modal.classList.add('hidden');
+  document.body.style.overflow = 'auto'; // Re-enable scrolling
+}
+
+function confirmSendEmail() {
+  // 1. Close the modal
+  closeChecklistModal();
+
+  // 2. Close the right side panel (canvas panel)
+  const canvasPanel = document.getElementById('canvas-panel');
+  if (canvasPanel) {
+    canvasPanel.classList.remove('open');
+  }
+
+  // 3. Open back the left nav (expand sidebar)
+  const sidebar = document.getElementById('sidebar');
+  const headerToggle = document.getElementById('header-toggle-btn');
+  if (sidebar && sidebar.classList.contains('collapsed')) {
+    sidebar.classList.remove('collapsed');
+    if (headerToggle) {
+      headerToggle.style.display = 'none';
+    }
+  }
+
+  // 4. Move to step 7 which will show the new message
+  nextStep();
+}
+
+function applyToolsFilters() {
+  // TODO: Implement filter application logic
+  // For now, just close the modal
+  closeToolsModal();
+
+  // Could add logic here to:
+  // 1. Collect filter values
+  // 2. Update UI with filter tags
+  // 3. Trigger search/filter action
+}
+
+// Keyboard support for modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('tools-modal-overlay');
+    if (modal && !modal.classList.contains('hidden')) {
+      closeToolsModal();
+    }
+  }
+});
+
+/* ────── Sidebar ────── */
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const headerToggle = document.getElementById('header-toggle-btn');
+  sidebar.classList.toggle('collapsed');
+  // Show header toggle only when sidebar is collapsed
+  headerToggle.style.display = sidebar.classList.contains('collapsed') ? '' : 'none';
+}
+
+/* ────── Side Panel Mode ────── */
+let sidebarStateBeforePanelMode = false; // Track if sidebar was collapsed before entering side panel mode
+
+function togglePanelMode() {
+  const appContainer = document.getElementById('app-container');
+  const backgroundIframe = document.getElementById('background-iframe');
+  const sidebar = document.getElementById('sidebar');
+  const panelToggleBtn = document.getElementById('panel-toggle-btn');
+  const panelToggleIcon = panelToggleBtn ? panelToggleBtn.querySelector('i') : null;
+  const sidePanelNavBtn = document.getElementById('side-panel-nav-btn');
+  const headerToggleBtn = document.getElementById('header-toggle-btn');
+
+  const isSidePanelMode = appContainer.classList.toggle('side-panel-mode');
+  if (backgroundIframe) backgroundIframe.classList.toggle('active');
+
+  if (isSidePanelMode) {
+    // Entering side panel mode - save current sidebar state
+    if (sidebar) sidebarStateBeforePanelMode = sidebar.classList.contains('collapsed');
+
+    // Hide sidebar and show navigation button
+    if (sidebar) sidebar.style.display = 'none';
+    if (headerToggleBtn) headerToggleBtn.style.display = 'none';
+    if (panelToggleIcon) panelToggleIcon.setAttribute('data-lucide', 'maximize');
+    if (panelToggleBtn) panelToggleBtn.title = 'Maximize to full screen';
+    if (sidePanelNavBtn) sidePanelNavBtn.style.display = 'block';
+  } else {
+    // Exiting side panel mode - restore previous sidebar state
+    if (sidebar) sidebar.style.display = '';
+    if (sidebarStateBeforePanelMode) {
+      // Sidebar was collapsed before, keep it collapsed and show header toggle
+      if (headerToggleBtn) headerToggleBtn.style.display = '';
+    } else {
+      // Sidebar was visible before, keep it visible
+      if (sidebar) sidebar.classList.remove('collapsed');
+      if (headerToggleBtn) headerToggleBtn.style.display = 'none';
+    }
+    if (panelToggleIcon) panelToggleIcon.setAttribute('data-lucide', 'minimize');
+    if (panelToggleBtn) panelToggleBtn.title = 'Minimize to side panel';
+    if (sidePanelNavBtn) sidePanelNavBtn.style.display = 'none';
+  }
+
+  // Update bottom input visibility first
+  const bottomInputArea = document.getElementById('bottom-input-area');
+  if (isSidePanelMode || currentStep >= 2) {
+    bottomInputArea.style.display = 'block';
+  } else {
+    bottomInputArea.style.display = 'none';
+  }
+
+  // Re-render content to apply side panel mode changes
+  renderUpToStep(currentStep);
+
+  // Reinitialize lucide icons
+  lucide.createIcons();
+}
+
+/* ────── Accordion ────── */
+function toggleAccordion(sectionId) {
+  const chevronId = sectionId === 'agent-section' ? 'agent-chevron' : 'chats-chevron';
+  const chevron = document.getElementById(chevronId);
+
+  if (sectionId === 'agent-section') {
+    const selector = document.getElementById('agent-section');
+    const nav = document.getElementById('agent-section-nav');
+    selector.classList.toggle('accordion-collapsed');
+    nav.classList.toggle('accordion-collapsed');
+    chevron.classList.toggle('chevron-rotated');
+  } else if (sectionId === 'chats-section') {
+    const filters = document.getElementById('chats-section-filters');
+    const list = document.getElementById('chats-section-list');
+    filters.classList.toggle('accordion-collapsed');
+    list.classList.toggle('accordion-collapsed');
+    chevron.classList.toggle('chevron-rotated');
+  }
+}
+
+/* ────── Module selector ────── */
+function pickModule(btn) {
+  document.getElementById('sel-label').textContent = btn.textContent.trim();
+  document.getElementById('sel-dd').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  const sel = document.getElementById('module-sel');
+  if (sel && !sel.contains(e.target)) document.getElementById('sel-dd').classList.remove('open');
+});
+
+/* ────── Filter chips ────── */
+function setFilter(el, filter) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  // Apply filter to conversation items
+  const items = document.querySelectorAll('.conv-item');
+  const headers = document.querySelectorAll('.conv-date-header');
+  items.forEach(item => {
+    const type = item.dataset.type; // 'case' or 'chat'
+    const status = item.dataset.status; // 'open' or 'closed'
+    let show = true;
+    if (filter === 'cases') show = type === 'case';
+    else if (filter === 'chats') show = type === 'chat';
+    else if (filter === 'open') show = status === 'open';
+    else if (filter === 'closed') show = status === 'closed';
+    item.classList.toggle('filtered-out', !show);
+  });
+  // Show/hide date headers if all their following items are hidden
+  headers.forEach(h => {
+    let next = h.nextElementSibling;
+    let anyVisible = false;
+    while (next && !next.classList.contains('conv-date-header')) {
+      if (next.classList.contains('conv-item') && !next.classList.contains('filtered-out')) anyVisible = true;
+      next = next.nextElementSibling;
+    }
+    h.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+/* ────── Prompt card click → fill input ────── */
+function fillPrompt(text) {
+  document.getElementById('chat-input').value = text;
+  document.getElementById('chat-input').focus();
+}
+
+/* ────── Steps ────── */
+function buildDots() {
+  document.getElementById('step-label').textContent = `Step ${currentStep+1} of ${totalSteps}`;
+}
+
+function goToStep(n) {
+  if (n < 0 || n >= totalSteps) return;
+  currentStep = n;
+  buildDots();
+  renderUpToStep(currentStep);
+
+  // Update title based on step
+  const titleEl = document.getElementById('conv-title');
+  if (currentStep >= 1) {
+    titleEl.textContent = 'REQ0012345: Parental leave extension request';
+  } else {
+    titleEl.textContent = 'New chat';
+  }
+
+  // Show/hide bottom input area based on step (always show in side panel mode)
+  const bottomInputArea = document.getElementById('bottom-input-area');
+  const appContainer = document.getElementById('app-container');
+  const isSidePanelMode = appContainer.classList.contains('side-panel-mode');
+
+  if (isSidePanelMode || currentStep >= 2) {
+    bottomInputArea.style.display = 'block';
+  } else {
+    bottomInputArea.style.display = 'none';
+  }
+
+  // Update active states
+  const newChatLink = document.getElementById('new-chat-link');
+  const convItems = document.querySelectorAll('.conv-item');
+
+  if (currentStep === 0) {
+    // Step 0: New chat is active
+    newChatLink.classList.add('active');
+    convItems.forEach(item => item.classList.remove('active'));
+  } else {
+    // Steps 1+: Conversation item is active
+    newChatLink.classList.remove('active');
+    // Make first conv item active (the REQ0012345 one)
+    convItems.forEach((item, idx) => {
+      if (idx === 0) item.classList.add('active');
+      else item.classList.remove('active');
+    });
+  }
+}
+function nextStep() { goToStep(currentStep + 1); }
+function prevStep() { goToStep(currentStep - 1); }
+
+/* ────── Render helpers ────── */
+function userMsg(text, extra='') {
+  return `<div class="flex justify-end fade-in"><div class="max-w-[85%]"><div class="bubble-user px-4 py-3 text-sm leading-relaxed">${text}</div>${extra ? '<div class="mt-1.5 flex justify-end">'+extra+'</div>' : ''}</div></div>`;
+}
+
+function aiMsg(html) {
+  return `<div class="flex justify-start fade-in"><div class="max-w-[100%]"><div class="bubble-ai text-sm leading-relaxed">${html}</div></div></div>`;
+}
+
+function ticketBanner() {
+  return `<div class="fade-in rounded-xl px-4 py-3 flex flex-wrap items-center gap-3 text-sm" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A20); border:1px solid #FDE68A;">
+    <span class="text-lg">&#127915;</span>
+    <div class="flex-1" style="min-width: 200px;">
+      <span class="font-semibold text-amber-900">REQ0012345</span>
+      <span class="text-amber-800 mx-1.5">&middot;</span>
+      <span class="text-amber-800">Parental leave extension request</span>
+      <p class="text-amber-800 text-xs mt-0.5">John Smith (Finance Dept)</p>
+      <div class="mt-0">
+        <span class="text-amber-800 text-xs">Priority: Medium</span>
+      </div>
+      <div class="flex items-center gap-1.5 mt-0">
+        <span class="text-amber-800 text-xs">Status:</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background:rgba(59,130,246,0.2); color:#3B82F6;">In Progress</span>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="text-xs font-medium text-amber-800 hover:bg-amber-100 bg-transparent cursor-pointer px-3 py-1.5 rounded-md" style="border: 1px solid #92400E;">View in ServiceNow &#8599;</button>
+      <button class="p-1.5 rounded-md hover:bg-amber-100 bg-transparent border-none cursor-pointer text-amber-800 flex items-center justify-center"><i data-lucide="ellipsis-vertical" class="w-4 h-4"></i></button>
+    </div>
+  </div>`;
+}
+
+function promptCards() {
+  const items = [
+    { icon: 'icons/document-sparkle.svg', t: 'Summarize open cases for weekly HR meeting', isCustom: true },
+    { icon: 'icons/search-sparkle.svg', t: 'Highlight unresolved or pending items', isCustom: true },
+    { icon: 'icons/search-sparkle.svg', t: 'Find precedents for remote work arrangements', isCustom: true },
+    { icon: 'icons/form-sparkle.svg', t: 'Show exemption cases for leave policies', isCustom: true },
+    { icon: 'icons/math-func-sparkle.svg', t: 'Calculate employee allowances in another countries', isCustom: true },
+  ];
+  return `<div class="max-w-[1000px] mx-auto"><div class="prompt-cards-container flex gap-3 mt-6 fade-in" style="flex-wrap: nowrap; align-items: stretch; justify-content: center;">${items.map(i => {
+    const iconHtml = i.isCustom
+      ? `<img src="${i.icon}" class="w-4 h-4 flex-shrink-0" alt="" />`
+      : `<i data-lucide="${i.icon}" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i>`;
+    return `<button onclick="fillPrompt('${i.t}')" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1; min-width: 200px;">${iconHtml}<span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">${i.t}</span></button>`;
+  }).join('')}</div></div>`;
+}
+
+function feedbackBtns() {
+  return `<div class="flex items-center gap-1 mt-3" style="border-top:1px solid #F1F5F9;">
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Helpful"><i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Not helpful"><i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Edit"><i data-lucide="square-pen" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Share"><i data-lucide="share-2" class="w-3.5 h-3.5"></i></button>
+  </div>`;
+}
+
+/* ────── Case Preview Panel ────── */
+function openCasePreview(caseId) {
+  // Navigate to step 4 (which displays as "5 of 10")
+  goToStep(4);
+
+  // Open case preview panel
+  const casePreviewPanel = document.getElementById('case-preview-panel');
+  casePreviewPanel.classList.add('open');
+
+  // Populate case preview content
+  const content = document.getElementById('case-preview-content');
+  content.innerHTML = generateCasePreviewHTML(caseId);
+
+  // Re-render icons
+  lucide.createIcons();
+}
+
+function closeCasePreview() {
+  const panel = document.getElementById('case-preview-panel');
+  panel.classList.remove('open');
+
+  // Reset button text and styling back to "Preview document"
+  const caseContainer = document.getElementById('case-2023-045-container');
+  if (caseContainer) {
+    const previewBtn = caseContainer.querySelector('button');
+    if (previewBtn && previewBtn.textContent === 'Close preview') {
+      previewBtn.textContent = 'Preview document';
+      previewBtn.onclick = function() { openCasePreview('#2023-045'); };
+      // Reset to outlined style
+      previewBtn.style.background = 'transparent';
+      previewBtn.style.border = '1px solid #004C97';
+      previewBtn.style.color = '#004C97';
+      previewBtn.onmouseover = function() { this.style.background='#004C97'; this.style.color='#fff'; };
+      previewBtn.onmouseout = function() { this.style.background='transparent'; this.style.color='#004C97'; };
+    }
+  }
+}
+
+function openDraftEmailCanvas() {
+  // Close case preview panel
+  closeCasePreview();
+
+  // Navigate to step 5
+  goToStep(5);
+
+  // Open canvas panel with letter content
+  const canvasPanel = document.getElementById('canvas-panel');
+  const canvasContent = document.getElementById('canvas-content');
+
+  canvasContent.innerHTML = generateDraftLetterHTML();
+  canvasPanel.classList.add('open');
+
+  // Reinitialize Lucide icons
+  lucide.createIcons();
+}
+
+function generateDraftLetterHTML() {
+  return `
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-semibold text-gray-800">Draft Response</h2>
+      <div class="flex items-center gap-2">
+        <!-- Button Group -->
+        <div class="inline-flex rounded-lg shadow-sm" role="group">
+          <button type="button" onclick="nextStep()" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white border-none rounded-l-lg focus:z-10" style="background:linear-gradient(135deg,#004C97,#0060BF);">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            Send Email
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10">
+            <i data-lucide="bookmark" class="w-4 h-4"></i>
+            Save Draft
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10">
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+            Share
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
+            Send for review
+          </button>
+        </div>
+
+        <!-- Close Button -->
+        <button onclick="closeCanvas()" class="p-2 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="border-b border-gray-200 mb-6" style="margin-left: -1.5rem; margin-right: -1.5rem; margin-bottom: 8px;"></div>
+
+    <!-- Editor Container with Shadow -->
+    <div class="bg-white rounded-lg border border-gray-200 mb-4" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-left: 3rem; margin-right: 3rem; margin-top: 3rem;">
+
+      <!-- Email Header Section -->
+      <div class="px-6 py-4" style="background: #F9FAFB; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+        <div class="space-y-2" style="font-size: 0.8rem;">
+          <div class="flex items-center">
+            <span class="font-medium text-gray-600" style="min-width: 4rem;">To:</span>
+            <span class="text-gray-800">John Smith &lt;john.smith@imf.com&gt;</span>
+          </div>
+          <div class="flex items-center">
+            <span class="font-medium text-gray-600" style="min-width: 4rem;">From:</span>
+            <span class="text-gray-800">John Miller (HR Policy Officer)</span>
+          </div>
+          <div class="flex items-center">
+            <span class="font-medium text-gray-600" style="min-width: 4rem;">Subject:</span>
+            <span class="text-gray-800">REQ0012345: Parental leave extension request</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Separator -->
+      <div class="border-b border-gray-200"></div>
+
+      <!-- WYSIWYG Controls -->
+      <div class="flex items-center justify-between gap-2 px-6 pb-3" style="border-bottom: 1px solid #E5E7EB; padding-top: 0.75rem;">
+      <div class="flex items-center gap-2">
+        <div class="relative">
+          <button onclick="toggleEnhanceMenu()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium cursor-pointer" style="background: white; border: 1px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg, #1e3a8a, #7c3aed); background-origin: border-box; background-clip: padding-box, border-box; color: #1e3a8a; font-size: 0.8rem;">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            Enhance with AI
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+          </button>
+
+          <div id="enhance-menu" class="hidden absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Adjust to comply with IMF policies
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Make text shorter
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Change to tone of voice to friendly
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Change to tone of voice to official
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Just fix the language errors
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Translate to...
+            </button>
+          </div>
+        </div>
+
+        <div class="inline-flex items-center gap-1" role="group">
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+            <i data-lucide="bold" class="w-5 h-5"></i>
+          </button>
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+            <i data-lucide="italic" class="w-5 h-5"></i>
+          </button>
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+            <i data-lucide="underline" class="w-5 h-5"></i>
+          </button>
+
+          <div class="border-l border-gray-200" style="height: 24px;"></div>
+
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
+            <i data-lucide="a-large-small" class="w-5 h-5"></i>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
+            <i data-lucide="paint-bucket" class="w-5 h-5"></i>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="inline-flex rounded-lg shadow-sm" role="group">
+        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+          <i data-lucide="history" class="w-4 h-4"></i>
+          Versions
+        </button>
+        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+          <i data-lucide="quote" class="w-4 h-4"></i>
+          Citations
+        </button>
+        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+          <i data-lucide="book-open-check" class="w-4 h-4"></i>
+          Provenance
+        </button>
+      </div>
+    </div>
+
+      <div contenteditable="true" class="w-full leading-relaxed" style="font-family: inherit; min-height: 500px; outline: none; background: white; font-size: 0.9rem; padding: 2rem 3rem; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem;">
+      <p style="margin: 0 0 1em 0;">Dear John Smith,</p>
+
+      <p style="margin: 0 0 1em 0;">I am writing to inform you of the decision regarding your request for an extension of parental leave due to medical complications (Case #2023-045).</p>
+
+      <p style="margin: 0 0 1em 0;">After careful review of your request and supporting medical documentation, I am pleased to inform you that your request for an <strong>8-week extension</strong> of parental leave has been <strong>approved</strong>.</p>
+
+      <p style="margin: 0 0 1em 0;"><strong>Decision Details:</strong></p>
+      <ul style="margin: 0 0 1em 0; padding-left: 1.5em;">
+        <li>Extension Period: <strong>8 weeks</strong></li>
+        <li>New Return Date: <strong>May 17, 2023</strong></li>
+        <li>Decision Authority: HR Director (M. Chen)</li>
+        <li>Decision Date: March 22, 2023</li>
+      </ul>
+
+      <p style="margin: 0 0 1em 0;">Your request meets the criteria outlined in <strong>HR Policy 4.2.3 - Parental Leave Extensions</strong>, specifically the provisions for medical exceptions. The medical documentation provided by Dr. Anderson clearly supports the need for extended recovery time.</p>
+
+      <p style="margin: 0 0 1em 0;"><strong>Please note the following:</strong></p>
+      <ul style="margin: 0 0 1em 0; padding-left: 1.5em;">
+        <li>You are required to provide medical clearance before your return to work</li>
+        <li>A phased return option is available if needed upon your return</li>
+        <li>HR will check in with you at the 6-week mark to discuss your transition plans</li>
+      </ul>
+
+      <p style="margin: 0 0 1em 0;">If you have any questions or concerns regarding this decision or your return to work, please do not hesitate to contact me or your HR Business Partner.</p>
+
+      <p style="margin: 0 0 1em 0;">We wish you a smooth recovery and look forward to your return.</p>
+
+      <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 1.5em 0;">
+
+      <p style="margin: 0 0 1em 0;">Best regards,</p>
+
+      <p style="margin: 0; font-size: 0.75rem; color: #6B7280; line-height: 1.4;">
+        <strong style="color: #374151;">John Miller</strong><br>
+        HR Specialist<br>
+        Human Resources Department<br>
+        International Monetary Fund
+      </p>
+      </div>
+    </div>
+  `;
+}
+
+function closeCanvas() {
+  const panel = document.getElementById('canvas-panel');
+  panel.classList.remove('open');
+}
+
+function toggleEnhanceMenu() {
+  const menu = document.getElementById('enhance-menu');
+  menu.classList.toggle('hidden');
+}
+
+// Close the enhance menu when clicking outside
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById('enhance-menu');
+  const button = event.target.closest('button[onclick="toggleEnhanceMenu()"]');
+
+  if (menu && !menu.classList.contains('hidden') && !button && !menu.contains(event.target)) {
+    menu.classList.add('hidden');
+  }
+});
+
+function generateCasePreviewHTML(caseId) {
+  return `
+    <div class="fade-in">
+      <!-- Header with Button Group and Close button -->
+      <div class="flex items-center justify-between mb-6 w-full">
+        <h2 class="text-xl font-semibold text-gray-800 flex-shrink-0">Case ID: ${caseId}</h2>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <!-- Button Group -->
+          <div class="inline-flex rounded-lg shadow-sm" role="group">
+            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10">
+              Open in ServiceNow
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" title="Copy Reference Number (${caseId})">
+              <i data-lucide="hash" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" title="Copy Case Summary">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" title="Share the Case">
+              <i data-lucide="share-2" class="w-4 h-4"></i>
+            </button>
+            <button type="button" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10" title="Save to Knowledge Base">
+              <i data-lucide="bookmark" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <button onclick="closeCasePreview()" class="p-2 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 2: Case Info -->
+      <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <div class="grid grid-cols-2" style="font-size: 0.8rem; gap: 0.4rem;">
+          <div><span style="color: #6B7785;">Date Created:</span> <span class="text-gray-800">March 15, 2023</span></div>
+          <div><span style="color: #6B7785;">Date Resolved:</span> <span class="text-gray-800">March 22, 2023</span></div>
+          <div><span style="color: #6B7785;">Category:</span> <span class="tag" style="background:rgba(107,114,128,0.1); color:#6b7280; font-size: 0.8rem;">Leave & Absence</span></div>
+          <div><span style="color: #6B7785;">Jurisdiction:</span> <span class="tag" style="background:rgba(107,114,128,0.1); color:#6b7280; font-size: 0.8rem;">Human Resources Department</span></div>
+          <div><span style="color: #6B7785;">Status:</span> <span class="tag" style="background:rgba(52,211,153,0.2); color:#059669; font-size: 0.8rem;">Resolved</span></div>
+          <div><span style="color: #6B7785;">Priority:</span> <span class="text-gray-800">Medium</span></div>
+          <div class="col-span-2 flex items-center">
+            <span style="color: #6B7785;">Assigned To:&nbsp;</span>
+            <a href="#" class="hover:underline inline-flex items-center gap-1" style="color: #004C97;">
+              Sarah Johnson (HR Specialist)
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+            <button class="hover:bg-gray-100 rounded bg-transparent border-none cursor-pointer text-gray-500 ml-1 inline-flex items-center" style="width: 20px; height: 20px; padding: 2px;">
+              <i data-lucide="ellipsis-vertical" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div class="col-span-2 flex items-center">
+            <span style="color: #6B7785;">Approved By:&nbsp;</span>
+            <a href="#" class="hover:underline inline-flex items-center gap-1" style="color: #004C97;">
+              Michael Chen (HR Director)
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+            <button class="hover:bg-gray-100 rounded bg-transparent border-none cursor-pointer text-gray-500 ml-1 inline-flex items-center" style="width: 20px; height: 20px; padding: 2px;">
+              <i data-lucide="ellipsis-vertical" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Employee Information -->
+      <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3 pb-3 border-b border-gray-200">Employee Information</h3>
+        <div class="grid grid-cols-2" style="font-size: 0.8rem; gap: 0.4rem;">
+          <div><span style="color: #6B7785;">Name:</span> <span class="text-gray-800">[Redacted for privacy]</span></div>
+          <div><span style="color: #6B7785;">Department:</span> <span class="text-gray-800">Finance</span></div>
+          <div><span style="color: #6B7785;">Grade:</span> <span class="text-gray-800">A14</span></div>
+          <div><span style="color: #6B7785;">Years of Service:</span> <span class="text-gray-800">6 years</span></div>
+          <div class="col-span-2"><span style="color: #6B7785;">Employment Status:</span> <span class="text-gray-800">Regular Staff</span></div>
+        </div>
+      </div>
+
+      <!-- Section 4: Request Details -->
+      <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3 pb-3 border-b border-gray-200">Request Details</h3>
+        <div class="grid grid-cols-2 mb-3" style="font-size: 0.8rem; gap: 0.4rem;">
+          <div><span style="color: #6B7785;">Request Type:</span> <span class="text-gray-800">Parental Leave Extension</span></div>
+          <div><span style="color: #6B7785;">Standard Leave Taken:</span> <span class="text-gray-800">16 weeks</span></div>
+          <div><span style="color: #6B7785;">Extension Requested:</span> <span class="text-gray-800">8 additional weeks</span></div>
+          <div><span style="color: #6B7785;">Total Leave:</span> <span class="text-gray-800 font-medium">24 weeks</span></div>
+        </div>
+        <div class="mt-3 border-t border-gray-200" style="padding-top: 1rem;">
+          <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Reason for Extension</p>
+          <p class="text-gray-800 leading-relaxed" style="font-size: 0.875rem;">Medical complications following childbirth requiring extended recovery period. Employee provided medical certification from attending physician documenting postpartum complications and recommended recovery timeline.</p>
+        </div>
+        <div class="mt-3 border-t border-gray-200" style="padding-top: 1rem;">
+          <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Supporting Documents</p>
+          <ul class="space-y-2" style="font-size: 0.8rem; list-style-type: disc; padding-left: 0.8rem;">
+            <li>
+              <a href="#" class="hover:underline inline-flex items-center gap-1" style="color: #004C97;">
+                Medical Certificate (Dr. Anderson, 03/10/23)
+                <i data-lucide="arrow-down-to-line" class="w-3 h-3"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline inline-flex items-center gap-1" style="color: #004C97;">
+                Leave Request Form (Submitted 03/12/23)
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline inline-flex items-center gap-1" style="color: #004C97;">
+                Supervisor Recommendation (Finance Dept Head)
+                <i data-lucide="arrow-down-to-line" class="w-3 h-3"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline inline-flex items-center gap-1" style="color: #004C97;">
+                HR Policy Review Notes
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Section 6: Compliance -->
+      <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3 pb-3 border-b border-gray-200">Compliance</h3>
+        <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Cited Policies</p>
+        <div class="space-y-2 mb-4">
+          <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
+            <i data-lucide="book-check" class="w-4 h-4 flex-shrink-0"></i>
+            <span>HR Policy 4.2.3 - Parental Leave Extensions</span>
+          </a>
+          <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
+            <i data-lucide="book-check" class="w-4 h-4 flex-shrink-0"></i>
+            <span>HR Guidelines Section 8.1 - Medical Exceptions</span>
+          </a>
+          <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
+            <i data-lucide="book-check" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Staff Rules Article XII - Leave Provisions</span>
+          </a>
+        </div>
+        <div class="mt-3 border-t border-gray-200" style="padding-top: 1rem;">
+          <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Related Cases Reviewed</p>
+          <div class="space-y-2">
+            <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
+              <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
+              <div class="flex items-center justify-between flex-1">
+                <span class="font-medium">Case #2022-128</span>
+                <span class="text-green-600 text-xs">Similar - 8 weeks approved</span>
+              </div>
+            </a>
+            <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
+              <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
+              <div class="flex items-center justify-between flex-1">
+                <span class="font-medium">Case #2021-095</span>
+                <span class="text-green-600 text-xs">Similar - 6 weeks approved</span>
+              </div>
+            </a>
+            <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
+              <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
+              <div class="flex items-center justify-between flex-1">
+                <span class="font-medium">Case #2023-012</span>
+                <span class="text-gray-500 text-xs">Different circumstances</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 7: Audit Trail -->
+      <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3 pb-3 border-b border-gray-200">Audit Trail</h3>
+
+        <div class="space-y-3" style="font-size: 0.8rem;">
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 15, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Case Created</div>
+              <div class="text-gray-600">Request submitted by employee via ServiceNow portal</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 16, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Document Review</div>
+              <div class="text-gray-600">Medical documentation verified by HR Specialist (S. Johnson)</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 18, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Policy Compliance Check</div>
+              <div class="space-y-1 mt-2">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="circle-check-big" class="w-3.5 h-3.5 text-green-600"></i>
+                  <span class="text-gray-700">Medical documentation provided</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="circle-check-big" class="w-3.5 h-3.5 text-green-600"></i>
+                  <span class="text-gray-700">Within 24-week maximum allowance</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="circle-check-big" class="w-3.5 h-3.5 text-green-600"></i>
+                  <span class="text-gray-700">Supervisor approval obtained</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="circle-check-big" class="w-3.5 h-3.5 text-green-600"></i>
+                  <span class="text-gray-700">No operational conflicts identified</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 20, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Precedent Analysis</div>
+              <div class="text-gray-600">Similar cases reviewed (#2022-128, #2021-095)</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 21, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">HR Analysis (S. Johnson)</div>
+              <div class="text-gray-600 italic">"Request meets all criteria for medical exception under HR Policy 4.2.3. Medical documentation is comprehensive and from qualified physician. Similar cases (#2022-128, #2021-095) were approved under comparable circumstances. Recommend approval for 8-week extension."</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 22, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Decision Approved</div>
+              <div class="text-gray-600">Extension approved by HR Director (M. Chen)</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 23, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Employee Notified</div>
+              <div class="text-gray-600">Formal notification sent via email and official letter</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 text-gray-500" style="width: 6rem;">Mar 24, 2023</div>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 mb-1">Case Closed</div>
+              <div class="text-gray-600">Automatically resolved and archived by system</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 12: Tags -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Parental Leave</span>
+        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Medical Exception</span>
+        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Leave Extension</span>
+        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Policy 4.2.3</span>
+        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Approved</span>
+        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Precedent</span>
+      </div>
+
+      <!-- Auto-suggestions -->
+      <div class="flex gap-3 mb-4">
+        <button onclick="openDraftEmailCanvas()" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
+          <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
+          <span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Generate a draft response email based on this case</span>
+        </button>
+        <button onclick="fillPrompt('Generate a draft request to retrieve medical documents')" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
+          <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
+          <span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Generate a draft request to retrieve medical documents</span>
+        </button>
+      </div>
+
+      <!-- Section 14: Note -->
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3" style="font-size: 11px;">
+        <p class="text-amber-800"><span class="font-medium">⚠️ Note:</span> Case details are read-only for reference purposes. To modify case records, please use ServiceNow directly.</p>
+      </div>
+    </div>
+  `;
+}
+
+function caseCard(id, star, date, dept, ext, justification, outcome, dm) {
+  return `<div class="rich-card p-4 mb-3">
+    <div class="flex items-start justify-between mb-2">
+      <div class="flex items-center gap-2"><span class="tag" style="background:#EBF3FE; color:#004C97;">Case</span>${star ? '<span class="tag flex items-center gap-1" style="background:linear-gradient(135deg, #0EA5E9 0%, #10B981 100%); color:#fff;"><i data-lucide="sparkles" class="w-3 h-3"></i> Most Relevant</span>' : ''}</div>
+      <span class="text-xs text-gray-400">${date}</span>
+    </div>
+    <h4 class="text-sm font-semibold text-gray-800 mb-2">Case ${id}</h4>
+    <div class="grid grid-cols-2 gap-x-4 text-gray-600 mb-3" style="font-size: 0.8rem; row-gap: 0.2rem;">
+      <div class="col-span-2"><span style="color: #6B7785;">Justification:</span> ${justification}</div>
+      <div><span style="color: #6B7785;">Department:</span> ${dept}</div>
+      <div><span style="color: #6B7785;">Extension:</span> ${ext}</div>
+      <div><span style="color: #6B7785;">Decision Maker:</span> ${dm}</div>
+      <div><span style="color: #6B7785;">Outcome:</span> <span class="font-medium" style="color:${outcome==='Approved'?'#059669':'#DC2626'}">${outcome}</span></div>
+    </div>
+    <div class="flex flex-wrap items-center" style="font-size: 0.8rem; gap: 0.8rem;">
+      <button onclick="openCasePreview('${id}')" class="font-medium px-3 py-1.5 rounded-md bg-transparent cursor-pointer transition-colors" style="border: 1px solid #004C97; color: #004C97;" onmouseover="this.style.background='#004C97'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#004C97';">Preview document</button>
+      <button class="font-medium hover:underline bg-transparent border-none cursor-pointer p-0" style="color: #004C97;">Open case ↗</button>
+      <span class="text-gray-300">|</span>
+      <button class="font-medium hover:underline bg-transparent border-none cursor-pointer p-0" style="color: #004C97;">Copy Reference</button>
+      <span class="text-gray-300">|</span>
+      <button class="font-medium hover:underline bg-transparent border-none cursor-pointer p-0" style="color: #004C97;">Use as Template</button>
+    </div>
+  </div>`;
+}
+
+/* ────── Steps content ────── */
+function renderUpToStep(step) {
+  const m = document.getElementById('messages');
+  const filterTags = document.getElementById('filter-tags');
+  let html = '';
+
+  filterTags.className = 'hidden';
+
+  // Step 1: Empty chat with prompt cards (hidden once user sends message at step 3+)
+  if (step <= 1) {
+    html += `<div class="text-center pt-0 pb-4 fade-in">
+      <div class="relative inline-block mx-auto mb-4">
+        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block;">
+          <source src="icons/ai-char-white.mp4" type="video/mp4">
+          <source src="icons/ai-char-white.mov" type="video/quicktime">
+          Your browser does not support the video tag.
+        </video>
+        <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none;">
+          <i data-lucide="sparkles" class="w-8 h-8" style="color:#fff;"></i>
+        </div>
+      </div>
+      <h2 class="font-semibold text-gray-800 mb-1" style="font-size: 1.7rem;">Hi John, how can I help you today?</h2>
+    </div>`;
+    if (step === 0) html += promptCards();
+  }
+
+  // Step 2: Ticket linked
+  if (step >= 1 && step < 2) {
+    html += ticketBanner();
+    html += `<div class="flex gap-3 my-6 fade-in" style="flex-wrap: nowrap; align-items: stretch;">
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="search" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Find similar parental leave precedents</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="file-check" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">What documentation is required for medical cases?</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Check current parental leave policy requirements</span></button>
+    </div>`;
+  }
+
+  // Ticket banner only (no suggestion cards) for step 2+
+  if (step >= 2) {
+    html += ticketBanner();
+  }
+
+  // Inline input field for steps 0-1 (centered in content area) - not shown in side panel mode
+  const appContainer = document.getElementById('app-container');
+  const isSidePanelMode = appContainer && appContainer.classList.contains('side-panel-mode');
+
+  if (step <= 1 && !isSidePanelMode) {
+    html += `<div class="mt-8 fade-in">
+      <div class="chat-input-container bg-white rounded-2xl px-4 py-3 border border-gray-200" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+        <textarea id="chat-input-inline" rows="2" placeholder="Ask me about HR policies, precedents, or cases..." class="chat-input w-full text-sm border-none outline-none bg-transparent text-gray-800 resize-none mb-2" style="line-height: 1.5;" autofocus></textarea>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1">
+            <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="paperclip" class="w-[18px] h-[18px]"></i></button>
+            <button onclick="openToolsModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="sliders-horizontal" class="w-[18px] h-[18px]"></i><span class="text-sm">Tools</span></button>
+            ${step >= 1 ? '<div class="flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1" style="background: transparent; border: 1px solid #F59E0B; color: #D97706; padding-top: 0.25rem; padding-bottom: 0.25rem;"><span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #D97706;"><i data-lucide="x" class="w-3 h-3"></i></button></div>' : ''}
+          </div>
+          <div class="flex items-center gap-1">
+            <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="mic" class="w-[18px] h-[18px]"></i></button>
+            <button onclick="nextStep()" class="p-2 rounded-xl border-none cursor-pointer text-white flex-shrink-0" style="background:linear-gradient(135deg,#004C97,#0060BF);"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-2 text-center" style="color: #6B7785; font-weight: 300;">AIDA may produce inaccurate information. Always verify it and align to IMF policies.</p>
+    </div>`;
+  }
+
+  // Step 3: User query + typing
+  if (step >= 2) {
+    html += userMsg(
+      'What are the precedents for extending parental leave beyond standard duration due to medical circumstances?',
+      '<span class="text-[10px] text-gray-400">Just now</span>'
+    );
+    if (step === 2) {
+      html += `<div class="fade-in">
+        <div>
+          <div class="flex gap-1.5 py-3"><div class="dot w-2 h-2 rounded-full bg-gray-400"></div><div class="dot w-2 h-2 rounded-full bg-gray-400"></div><div class="dot w-2 h-2 rounded-full bg-gray-400"></div></div>
+          <div class="mt-2 space-y-2">
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Analyzing query intent</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div class="text-gray-700"><span class="text-gray-500">Detected:</span> Precedent search for policy exception</div>
+                <div class="text-gray-700"><span class="text-gray-500">Topic:</span> Parental leave extensions</div>
+                <div class="text-gray-700"><span class="text-gray-500">Context:</span> Medical circumstances</div>
+                <div class="text-gray-700"><span class="text-gray-500">Classification:</span> Policy interpretation + Exception request</div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Searching connected systems</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div class="text-gray-700">Querying SharePoint HR Policy repository... <span class="text-green-600">✓ 847 documents scanned</span></div>
+                <div class="text-gray-700">Searching Nexus case files... <span class="text-green-600">✓ 1,243 cases reviewed</span></div>
+                <div class="text-gray-700">Accessing ServiceNow historical tickets... <span class="text-green-600">✓ 392 relevant tickets found</span></div>
+                <div class="text-gray-700">Checking PeopleSoft employee records... <span class="text-green-600">✓ 67 similar cases identified</span></div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Applying semantic filters</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div class="text-gray-700"><span class="text-gray-500">Filtering for:</span> "parental leave" + "medical extension" + "precedent"</div>
+                <div class="text-gray-700"><span class="text-gray-500">Excluding:</span> Standard duration cases, routine approvals</div>
+                <div class="text-gray-700"><span class="text-gray-500">Prioritizing:</span> Exception approvals, medical complications, policy interpretations</div>
+                <div class="text-gray-700"><span class="text-gray-500">Time range:</span> Last 7 years of precedents</div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Mining relevant precedents</span>
+              </summary>
+              <div class="mt-2 ml-5 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div>Found 23 relevant cases with medical extensions</div>
+                <div>Analyzing approval patterns and rationale</div>
+                <div>Extracting policy citations and decision criteria</div>
+                <div>Identifying similar circumstances and outcomes</div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Generating response</span>
+              </summary>
+              <div class="mt-2 ml-5 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div>Structuring precedent summary</div>
+                <div>Adding source citations from: HR Policy Manual Section 4.2, ServiceNow Cases, Nexus Documents</div>
+                <div>Confidence level: High (89%)</div>
+                <div>Response ready for review</div>
+              </div>
+            </details>
+            <div class="flex items-center gap-1.5 text-xs text-green-600" style="margin-top: 1rem;">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+              <span>Analysis complete (4.2 seconds)</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // Step 4: AI response — with confidence tag, gradient summary, active highlight on step 5
+  if (step >= 3) {
+    const medActive = step >= 4; // highlight medical complications when canvas is open
+    html += aiMsg(`
+      <div class="flex items-center gap-2 mb-3">
+        <details class="group inline-block">
+          <summary class="flex items-center gap-2 cursor-pointer list-none">
+            <span class="text-gray-600 hover:text-gray-800 flex items-center gap-1" style="font-size: 0.8rem; opacity: 0.7;">
+              Research completed
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+            </span>
+          </summary>
+          <div class="mt-3 space-y-2">
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Analyzing query intent</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div class="text-gray-700"><span class="text-gray-500">Detected:</span> Precedent search for policy exception</div>
+                <div class="text-gray-700"><span class="text-gray-500">Topic:</span> Parental leave extensions</div>
+                <div class="text-gray-700"><span class="text-gray-500">Context:</span> Medical circumstances</div>
+                <div class="text-gray-700"><span class="text-gray-500">Classification:</span> Policy interpretation + Exception request</div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Searching connected systems</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div class="text-gray-700">Querying SharePoint HR Policy repository... <span class="text-green-600">✓ 847 documents scanned</span></div>
+                <div class="text-gray-700">Searching Nexus case files... <span class="text-green-600">✓ 1,243 cases reviewed</span></div>
+                <div class="text-gray-700">Accessing ServiceNow historical tickets... <span class="text-green-600">✓ 392 relevant tickets found</span></div>
+                <div class="text-gray-700">Checking PeopleSoft employee records... <span class="text-green-600">✓ 67 similar cases identified</span></div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Applying semantic filters</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div class="text-gray-700"><span class="text-gray-500">Filtering for:</span> "parental leave" + "medical extension" + "precedent"</div>
+                <div class="text-gray-700"><span class="text-gray-500">Excluding:</span> Standard duration cases, routine approvals</div>
+                <div class="text-gray-700"><span class="text-gray-500">Prioritizing:</span> Exception approvals, medical complications, policy interpretations</div>
+                <div class="text-gray-700"><span class="text-gray-500">Time range:</span> Last 7 years of precedents</div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Mining relevant precedents</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div>Found 23 relevant cases with medical extensions</div>
+                <div>Analyzing approval patterns and rationale</div>
+                <div>Extracting policy citations and decision criteria</div>
+                <div>Identifying similar circumstances and outcomes</div>
+              </div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+                <span>Generating response</span>
+              </summary>
+              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+                <div>Structuring precedent summary</div>
+                <div>Adding source citations from: HR Policy Manual Section 4.2, ServiceNow Cases, Nexus Documents</div>
+                <div>Confidence level: High (89%)</div>
+                <div>Response ready for review</div>
+              </div>
+            </details>
+            <div class="flex items-center gap-1.5 text-xs text-green-600" style="margin-top: 1rem;">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+              <span>Analysis complete (4.2 seconds)</span>
+            </div>
+          </div>
+        </details>
+        <span class="tag" style="background:#0C9769; color:#fff;">High Confidence: 92%</span>
+      </div>
+      <p class="text-sm text-gray-800 leading-relaxed mb-4">I've searched across HR repositories and found <strong>8 relevant precedents</strong> for parental leave extensions due to medical circumstances. Based on ticket REQ0012345, the most relevant case is <strong><a href="#" onclick="goToStep(4); return false;" class="text-imf-blue hover:underline cursor-pointer">Case #2023-045</a></strong> (similar medical circumstances).</p>
+      <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Precedent Categories</p>
+      <div class="space-y-2 mb-4">
+        <details id="medical-complications-accordion" class="group rounded-lg border border-gray-300 bg-white" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+          <summary class="w-full text-left p-4 cursor-pointer transition-all text-sm flex items-center justify-between list-none hover:bg-gray-50 rounded-lg">
+            <span class="flex items-center gap-2">
+              <i data-lucide="history" class="w-4 h-4 text-gray-800"></i>
+              <span class="font-medium text-gray-800">Medical complications</span>
+              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center;">4 cases</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-4 pb-4 pt-4 border-t border-gray-200">
+            <div id="case-2023-045-container">${caseCard('#2023-045', true, '13 Mar 2023', 'Finance', '8 weeks', 'Postpartum complications requiring extended recovery', 'Approved', 'HR Director')}</div>
+            ${caseCard('#2022-198', false, '5 Sep 2022', 'Research', '6 weeks', 'Pregnancy-related medical condition', 'Approved', 'Division Chief')}
+            ${caseCard('#2023-012', false, '22 Jan 2023', 'IT Services', '4 weeks', 'Neonatal intensive care requirements', 'Approved', 'HR Director')}
+            ${caseCard('#2021-287', false, '14 Nov 2021', 'Legal', '10 weeks', 'Severe postpartum condition with hospitalization', 'Approved', 'Deputy HR Director')}
+          </div>
+        </details>
+        <details class="group rounded-lg border border-gray-300 bg-white" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+          <summary class="w-full text-left p-4 cursor-pointer transition-all text-sm flex items-center justify-between list-none hover:bg-gray-50 rounded-lg">
+            <span class="flex items-center gap-2">
+              <i data-lucide="history" class="w-4 h-4 text-gray-800"></i>
+              <span class="font-medium text-gray-800">Multiple births with complications</span>
+              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center;">2 cases</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-4 pb-4 pt-4 border-t border-gray-200">
+            ${caseCard('#2022-156', false, '18 Jun 2022', 'Communications', '12 weeks', 'Twins with neonatal complications', 'Approved', 'HR Director')}
+            ${caseCard('#2023-089', false, '7 Apr 2023', 'Finance', '10 weeks', 'Triplets requiring extended care', 'Approved', 'Deputy HR Director')}
+          </div>
+        </details>
+        <details class="group rounded-lg border border-gray-300 bg-white" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+          <summary class="w-full text-left p-4 cursor-pointer transition-all text-sm flex items-center justify-between list-none hover:bg-gray-50 rounded-lg">
+            <span class="flex items-center gap-2">
+              <i data-lucide="history" class="w-4 h-4 text-gray-800"></i>
+              <span class="font-medium text-gray-800">International assignments with medical factors</span>
+              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center;">2 cases</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-4 pb-4 pt-4 border-t border-gray-200">
+            ${caseCard('#2021-334', false, '29 Dec 2021', 'Field Operations', '6 weeks', 'Medical evacuation from field location', 'Approved', 'Regional Director')}
+            ${caseCard('#2022-245', false, '3 Oct 2022', 'External Relations', '8 weeks', 'Limited medical facilities at duty station', 'Approved', 'HR Director')}
+          </div>
+        </details>
+      </div>
+      <p class="font-semibold text-gray-500 uppercase mb-2 mt-6" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Related materials</p>
+      <div class="space-y-2 mb-4">
+        <div class="rounded-lg border border-gray-300 bg-white p-4 cursor-pointer hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+          <div class="text-sm flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i data-lucide="book-check" class="w-4 h-4 text-gray-800"></i>
+              <span class="font-medium text-gray-800">Policies</span>
+              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center;">24 policies</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+      ${feedbackBtns()}
+    `);
+  }
+
+  // Step 5: AI response with draft email card
+  if (step >= 5) {
+    html += aiMsg(`
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-gray-600 hover:text-gray-800 flex items-center gap-1" style="font-size: 0.8rem; opacity: 0.7;">
+          Draft completed
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        </span>
+        <span class="tag" style="background:#0C9769; color:#fff;">High Confidence: 95%</span>
+      </div>
+      <p class="mb-3">I generated a draft message for your employee with approval confirmation and next steps.</p>
+      <div class="rounded-lg border border-gray-300 bg-white p-4 cursor-pointer hover:bg-gray-50 transition-all flex items-center justify-between" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);" onclick="openDraftEmailCanvas()">
+        <div class="flex items-center gap-3">
+          <i data-lucide="sparkles" class="w-5 h-5 text-gray-800"></i>
+          <span class="font-medium text-gray-800">Draft response to employee</span>
+        </div>
+        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+      </div>
+      ${feedbackBtns()}
+    `);
+  }
+
+
+  // Step 7: Email sent confirmation
+  if (step >= 7) {
+    html += aiMsg(`
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-gray-600 hover:text-gray-800 flex items-center gap-1" style="font-size: 0.8rem; opacity: 0.7;">
+          Action successful
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        </span>
+      </div>
+      <p class="mb-3">I updated ServiceNow ticket <a href="#" class="text-imf-blue hover:underline font-medium">REQ0012345</a> and included the sent message there.</p>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
+          Open in ServiceNow
+          <i data-lucide="external-link" class="w-4 h-4 text-imf-blue"></i>
+        </button>
+        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
+          <i data-lucide="refresh-cw" class="w-4 h-4 text-imf-blue"></i>
+          Update Ticket Status
+        </button>
+        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
+          <i data-lucide="layout-template" class="w-4 h-4 text-imf-blue"></i>
+          Save to Templates
+        </button>
+        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
+          <i data-lucide="message-circle" class="w-4 h-4 text-imf-blue"></i>
+          Start New Chat
+        </button>
+      </div>
+      ${feedbackBtns()}
+    `);
+  }
+
+
+  m.innerHTML = html;
+
+  // Center content vertically on steps 0-1 in full screen mode
+  const feed = document.getElementById('chat-feed');
+  const isCentered = step <= 1 && !appContainer.classList.contains('side-panel-mode');
+
+  if (isCentered) {
+    feed.classList.add('center-content');
+  } else {
+    feed.classList.remove('center-content');
+  }
+
+  // Show/hide ticket chip in bottom input area (step 1+ when bottom input is visible)
+  const ticketChipBottom = document.getElementById('ticket-chip-bottom');
+  if (ticketChipBottom) {
+    if (step >= 1) {
+      ticketChipBottom.className = 'flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1';
+      ticketChipBottom.style.cssText = 'background: transparent; border: 1px solid #F59E0B; color: #D97706; padding-top: 0.25rem; padding-bottom: 0.25rem;';
+      ticketChipBottom.innerHTML = '<span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #D97706;"><i data-lucide="x" class="w-3 h-3"></i></button>';
+    } else {
+      ticketChipBottom.className = 'hidden';
+      ticketChipBottom.innerHTML = '';
+    }
+  }
+
+  // Update send/stop button based on step (step 2 = typing/loading, show stop button)
+  const sendStopBtn = document.getElementById('send-stop-btn');
+  if (sendStopBtn) {
+    if (step === 2) {
+      // Show outlined stop button on step 2 (3 of 10 - while AI is typing)
+      sendStopBtn.innerHTML = '<i data-lucide="square" class="w-4 h-4"></i>';
+      sendStopBtn.style.background = 'transparent';
+      sendStopBtn.style.border = '1px solid #CBD5E1';
+      sendStopBtn.style.color = '#64748B';
+    } else {
+      // Show primary send button on all other steps
+      sendStopBtn.innerHTML = '<i data-lucide="arrow-up" class="w-4 h-4"></i>';
+      sendStopBtn.style.background = 'linear-gradient(135deg,#004C97,#0060BF)';
+      sendStopBtn.style.border = 'none';
+      sendStopBtn.style.color = '#fff';
+    }
+  }
+
+  // Open case preview panel on step 4 (5 of 10)
+  const casePreviewPanel = document.getElementById('case-preview-panel');
+  if (casePreviewPanel) {
+    if (step === 4) {
+      // Open case preview panel and populate with case #2023-045
+      casePreviewPanel.classList.add('open');
+      const content = document.getElementById('case-preview-content');
+      if (content && !content.innerHTML) {
+        content.innerHTML = generateCasePreviewHTML('#2023-045');
+      }
+
+      // Expand Medical complications accordion on step 4
+      setTimeout(() => {
+        const medicalAccordion = document.getElementById('medical-complications-accordion');
+        if (medicalAccordion) {
+          medicalAccordion.setAttribute('open', '');
+        }
+
+        // Change "Preview document" to "Close preview" for case #2023-045
+        const caseContainer = document.getElementById('case-2023-045-container');
+        if (caseContainer) {
+          const previewBtn = caseContainer.querySelector('button[onclick*="openCasePreview"]');
+          if (previewBtn) {
+            previewBtn.textContent = 'Close preview';
+            previewBtn.onclick = function() { closeCasePreview(); };
+            // Change to primary blue style
+            previewBtn.style.background = 'linear-gradient(135deg,#004C97,#0060BF)';
+            previewBtn.style.border = 'none';
+            previewBtn.style.color = '#fff';
+            previewBtn.onmouseover = null;
+            previewBtn.onmouseout = null;
+          }
+        }
+        lucide.createIcons();
+      }, 50);
+    } else {
+      // Close case preview panel on other steps
+      casePreviewPanel.classList.remove('open');
+
+      // Reset accordion and button on other steps
+      const medicalAccordion = document.getElementById('medical-complications-accordion');
+      if (medicalAccordion) {
+        medicalAccordion.removeAttribute('open');
+      }
+
+      // Reset button text back to "Preview document"
+      const caseContainer = document.getElementById('case-2023-045-container');
+      if (caseContainer) {
+        const previewBtn = caseContainer.querySelector('button');
+        if (previewBtn && previewBtn.textContent === 'Close preview') {
+          previewBtn.textContent = 'Preview document';
+          previewBtn.onclick = function() { openCasePreview('#2023-045'); };
+          // Reset to outlined style
+          previewBtn.style.background = 'transparent';
+          previewBtn.style.border = '1px solid #004C97';
+          previewBtn.style.color = '#004C97';
+          previewBtn.onmouseover = function() { this.style.background='#004C97'; this.style.color='#fff'; };
+          previewBtn.onmouseout = function() { this.style.background='transparent'; this.style.color='#004C97'; };
+        }
+      }
+    }
+  }
+
+  // Open canvas panel on step 5-6 only (not step 7+)
+  const canvasPanel = document.getElementById('canvas-panel');
+  if (canvasPanel) {
+    if (step >= 5 && step <= 6) {
+      // Close case preview panel first
+      if (casePreviewPanel) {
+        casePreviewPanel.classList.remove('open');
+      }
+
+      // Collapse left navigation sidebar
+      const sidebar = document.getElementById('sidebar');
+      const headerToggle = document.getElementById('header-toggle-btn');
+      if (sidebar && !sidebar.classList.contains('collapsed')) {
+        sidebar.classList.add('collapsed');
+        if (headerToggle) {
+          headerToggle.style.display = '';
+        }
+      }
+
+      // Open canvas panel and populate with draft email content
+      canvasPanel.classList.add('open');
+      const canvasContent = document.getElementById('canvas-content');
+      if (canvasContent && !canvasContent.innerHTML) {
+        canvasContent.innerHTML = generateDraftLetterHTML();
+        lucide.createIcons();
+      }
+    } else {
+      // Close canvas panel on other steps
+      canvasPanel.classList.remove('open');
+    }
+  }
+
+  // Open checklist modal on step 6
+  if (step === 6) {
+    setTimeout(() => {
+      openChecklistModal();
+    }, 300); // Small delay to ensure DOM is ready
+  }
+
+  // Re-init icons
+  lucide.createIcons();
+
+  // Scroll behavior based on step
+  if (step === 4) {
+    // Scroll to top on step 4 (5 of 10) to show the case preview
+    setTimeout(() => {
+      feed.scrollTop = 0;
+      updateScrollGradient();
+    }, 50);
+  } else if (step >= 2) {
+    // Scroll to bottom for other steps 2+
+    setTimeout(() => {
+      feed.scrollTop = feed.scrollHeight;
+      updateScrollGradient();
+    }, 50);
+  }
+}
+
+/* ────── Scroll Gradient ────── */
+function updateScrollGradient() {
+  const feed = document.getElementById('chat-feed');
+  const gradient = document.getElementById('scroll-gradient');
+
+  if (!feed || !gradient) return;
+
+  // Check if scrolled to bottom
+  const isAtBottom = feed.scrollHeight - feed.scrollTop <= feed.clientHeight + 10;
+
+  // Show gradient if not at bottom
+  if (isAtBottom) {
+    gradient.style.opacity = '0';
+  } else {
+    gradient.style.opacity = '1';
+  }
+}
+
+// Add scroll listener to chat feed
+document.addEventListener('DOMContentLoaded', function() {
+  const feed = document.getElementById('chat-feed');
+  if (feed) {
+    feed.addEventListener('scroll', updateScrollGradient);
+  }
+});
+
+/* ────── Init ────── */
+buildDots();
+renderUpToStep(0);
+// Set initial active state for New chat link
+document.getElementById('new-chat-link').classList.add('active');
+</script>
+</body>
+</html>

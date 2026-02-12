@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude
+.claude/
+
+# Backup files
+*.copy.html
+
+# CSV data files (if you don't want to publish them)
+*.csv
