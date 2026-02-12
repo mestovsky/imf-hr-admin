@@ -298,7 +298,7 @@
 
     <!-- Navigation links -->
     <div id="agent-section-nav" class="flex-shrink-0 px-1 mb-4">
-      <button id="new-chat-link" onclick="goToStep(0)" class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
+      <button id="new-chat-link" onclick="window.location.href='index.html'" class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
         <i data-lucide="message-circle" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
         <span>New chat</span>
       </button>
@@ -2438,8 +2438,7 @@ document.addEventListener('DOMContentLoaded', function() {
 /* ────── Init ────── */
 buildDots();
 renderHRSummary(); // Render HR summary flow
-// Set initial active state for New chat link
-document.getElementById('new-chat-link').classList.add('active');
+// Don't set "New chat" as active in HR summary flow - the conversation item is active instead
 </script>
 </body>
 </html>
