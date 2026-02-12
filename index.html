@@ -23,6 +23,7 @@
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+    html { font-size: 17px; }
     body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: #1E293B; position: relative; }
 
     /* Side panel mode */
@@ -186,6 +187,19 @@
     /* Smooth content appearance */
     .fade-in { animation: fadeIn 0.3s ease forwards; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Spinner animation for AI avatar on step 2 */
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .spinner-ring {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border: 2px solid transparent;
+      border-top-color: #004C97;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 0;
+    }
 
     /* Checkbox */
     .chk { accent-color: #004C97; }
@@ -1049,8 +1063,8 @@ function promptCards() {
   ];
   return `<div class="max-w-[1000px] mx-auto"><div class="prompt-cards-container flex gap-3 mt-6 fade-in" style="flex-wrap: nowrap; align-items: stretch; justify-content: center;">${items.map(i => {
     const iconHtml = i.isCustom
-      ? `<img src="${i.icon}" class="w-4 h-4 flex-shrink-0" alt="" />`
-      : `<i data-lucide="${i.icon}" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i>`;
+      ? `<img src="${i.icon}" class="w-5 h-5 flex-shrink-0" alt="" />`
+      : `<i data-lucide="${i.icon}" class="w-5 h-5 flex-shrink-0" style="color: #2256A6;"></i>`;
     return `<button onclick="fillPrompt('${i.t}')" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1; min-width: 200px;">${iconHtml}<span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">${i.t}</span></button>`;
   }).join('')}</div></div>`;
 }
@@ -1241,7 +1255,17 @@ function generateDraftLetterHTML() {
         </div>
       </div>
 
-      <div class="inline-flex rounded-lg shadow-sm" role="group">
+      <div class="flex items-center gap-2">
+        <div class="inline-flex gap-1">
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none rounded" title="Undo">
+            <i data-lucide="undo" class="w-5 h-5"></i>
+          </button>
+          <button type="button" disabled class="p-2 text-gray-400 bg-transparent border-none rounded cursor-not-allowed" title="Redo">
+            <i data-lucide="redo" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="inline-flex rounded-lg shadow-sm" role="group">
         <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
           <i data-lucide="history" class="w-4 h-4"></i>
           Versions
@@ -1254,6 +1278,7 @@ function generateDraftLetterHTML() {
           <i data-lucide="book-open-check" class="w-4 h-4"></i>
           Provenance
         </button>
+        </div>
       </div>
     </div>
 
@@ -1587,11 +1612,11 @@ function generateCasePreviewHTML(caseId) {
       <!-- Auto-suggestions -->
       <div class="flex gap-3 mb-4">
         <button onclick="openDraftEmailCanvas()" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl cursor-pointer transition-all" style="background: linear-gradient(135deg, rgba(167, 139, 250, 0.08) 0%, rgba(139, 192, 246, 0.08) 100%); border: 1px solid rgba(167, 139, 250, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
-          <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
+          <img src="icons/pen-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" />
           <span class="text-left" style="font-size: 0.9rem; line-height: 1.25rem; font-weight: 400; color: #374151;">Generate a draft response email based on this case</span>
         </button>
         <button onclick="fillPrompt('Generate a draft request to retrieve medical documents')" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl cursor-pointer transition-all" style="background: linear-gradient(135deg, rgba(167, 139, 250, 0.08) 0%, rgba(139, 192, 246, 0.08) 100%); border: 1px solid rgba(167, 139, 250, 0.2); box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
-          <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
+          <img src="icons/pen-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" />
           <span class="text-left" style="font-size: 0.9rem; line-height: 1.25rem; font-weight: 400; color: #374151;">Generate a draft request to retrieve medical documents</span>
         </button>
       </div>
@@ -1663,9 +1688,9 @@ function renderUpToStep(step) {
   if (step >= 1 && step < 2) {
     html += ticketBanner();
     html += `<div class="flex gap-3 my-6 fade-in" style="flex-wrap: nowrap; align-items: stretch;">
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="search" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Find similar parental leave precedents</span></button>
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="file-check" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">What documentation is required for medical cases?</span></button>
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Check current parental leave policy requirements</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/search-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Find similar parental leave precedents</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/chat-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">What documentation is required for medical cases?</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/action-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Check current parental leave policy requirements</span></button>
     </div>`;
   }
 
@@ -1707,75 +1732,30 @@ function renderUpToStep(step) {
     if (step === 2) {
       html += `<div class="fade-in">
         <div>
-          <div class="flex gap-1.5 py-3"><div class="dot w-2 h-2 rounded-full bg-gray-400"></div><div class="dot w-2 h-2 rounded-full bg-gray-400"></div><div class="dot w-2 h-2 rounded-full bg-gray-400"></div></div>
-          <div class="mt-2 space-y-2">
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Analyzing query intent</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div class="text-gray-700"><span class="text-gray-500">Detected:</span> Precedent search for policy exception</div>
-                <div class="text-gray-700"><span class="text-gray-500">Topic:</span> Parental leave extensions</div>
-                <div class="text-gray-700"><span class="text-gray-500">Context:</span> Medical circumstances</div>
-                <div class="text-gray-700"><span class="text-gray-500">Classification:</span> Policy interpretation + Exception request</div>
+          <div class="flex justify-start py-3">
+            <div class="relative inline-flex items-center justify-center" style="width: 48px; height: 48px;">
+              <div class="spinner-ring"></div>
+              <div class="relative inline-block" style="width: 40px; height: 40px; z-index: 1;">
+                <video autoplay loop muted playsinline class="w-full h-full rounded-full" style="object-fit: cover; display: block;">
+                  <source src="icons/ai-char-white.mp4" type="video/mp4">
+                  <source src="icons/ai-char-white.mov" type="video/quicktime">
+                </video>
+                <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none; z-index: 2;">
+                  <i data-lucide="sparkles" class="w-4 h-4" style="color:#fff;"></i>
+                </div>
               </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Searching connected systems</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div class="text-gray-700">Querying SharePoint HR Policy repository... <span class="text-green-600">✓ 847 documents scanned</span></div>
-                <div class="text-gray-700">Searching Nexus case files... <span class="text-green-600">✓ 1,243 cases reviewed</span></div>
-                <div class="text-gray-700">Accessing ServiceNow historical tickets... <span class="text-green-600">✓ 392 relevant tickets found</span></div>
-                <div class="text-gray-700">Checking PeopleSoft employee records... <span class="text-green-600">✓ 67 similar cases identified</span></div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Applying semantic filters</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div class="text-gray-700"><span class="text-gray-500">Filtering for:</span> "parental leave" + "medical extension" + "precedent"</div>
-                <div class="text-gray-700"><span class="text-gray-500">Excluding:</span> Standard duration cases, routine approvals</div>
-                <div class="text-gray-700"><span class="text-gray-500">Prioritizing:</span> Exception approvals, medical complications, policy interpretations</div>
-                <div class="text-gray-700"><span class="text-gray-500">Time range:</span> Last 7 years of precedents</div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Mining relevant precedents</span>
-              </summary>
-              <div class="mt-2 ml-5 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div>Found 23 relevant cases with medical extensions</div>
-                <div>Analyzing approval patterns and rationale</div>
-                <div>Extracting policy citations and decision criteria</div>
-                <div>Identifying similar circumstances and outcomes</div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Generating response</span>
-              </summary>
-              <div class="mt-2 ml-5 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div>Structuring precedent summary</div>
-                <div>Adding source citations from: HR Policy Manual Section 4.2, ServiceNow Cases, Nexus Documents</div>
-                <div>Confidence level: High (89%)</div>
-                <div>Response ready for review</div>
-              </div>
-            </details>
-            <div class="flex items-center gap-1.5 text-xs text-green-600" style="margin-top: 1rem;">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-              <span>Analysis complete (4.2 seconds)</span>
             </div>
+          </div>
+          <div id="accordion-container" class="mt-2 space-y-2">
+            <!-- Accordions will be inserted here dynamically -->
           </div>
         </div>
       </div>`;
+
+      // Start the accordion animation sequence after render
+      setTimeout(() => {
+        startAccordionAnimation();
+      }, 500);
     }
   }
 
@@ -1854,7 +1834,7 @@ function renderUpToStep(step) {
             </details>
             <div class="flex items-center gap-1.5 text-xs text-green-600" style="margin-top: 1rem;">
               <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-              <span>Analysis complete (4.2 seconds)</span>
+              <span>Analysis complete (10.2 seconds)</span>
             </div>
           </div>
         </details>
@@ -1971,18 +1951,18 @@ function renderUpToStep(step) {
       <div class="flex flex-wrap gap-2 mb-3">
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
           Open in ServiceNow
-          <i data-lucide="external-link" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="external-link" class="w-5 h-5 text-imf-blue"></i>
         </button>
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="refresh-cw" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-imf-blue"></i>
           Update Ticket Status
         </button>
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="layout-template" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="layout-template" class="w-5 h-5 text-imf-blue"></i>
           Save to Templates
         </button>
-        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="message-circle" class="w-4 h-4 text-imf-blue"></i>
+        <button onclick="goToStep(0)" class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
+          <i data-lucide="message-circle" class="w-5 h-5 text-imf-blue"></i>
           Start New Chat
         </button>
       </div>
@@ -2180,6 +2160,148 @@ document.addEventListener('DOMContentLoaded', function() {
     feed.addEventListener('scroll', updateScrollGradient);
   }
 });
+
+/* ────── Accordion Animation ────── */
+function startAccordionAnimation() {
+  const container = document.getElementById('accordion-container');
+  if (!container) return;
+
+  const accordionData = [
+    {
+      title: 'Analyzing query intent',
+      items: [
+        '<div class="text-gray-700"><span class="text-gray-500">Detected:</span> Precedent search for policy exception</div>',
+        '<div class="text-gray-700"><span class="text-gray-500">Topic:</span> Parental leave extensions</div>',
+        '<div class="text-gray-700"><span class="text-gray-500">Context:</span> Medical circumstances</div>',
+        '<div class="text-gray-700"><span class="text-gray-500">Classification:</span> Policy interpretation + Exception request</div>'
+      ]
+    },
+    {
+      title: 'Searching connected systems',
+      items: [
+        '<div class="text-gray-700">Querying SharePoint HR Policy repository... <span class="text-green-600">✓ 847 documents scanned</span></div>',
+        '<div class="text-gray-700">Searching Nexus case files... <span class="text-green-600">✓ 1,243 cases reviewed</span></div>',
+        '<div class="text-gray-700">Accessing ServiceNow historical tickets... <span class="text-green-600">✓ 392 relevant tickets found</span></div>',
+        '<div class="text-gray-700">Checking PeopleSoft employee records... <span class="text-green-600">✓ 67 similar cases identified</span></div>'
+      ]
+    },
+    {
+      title: 'Applying semantic filters',
+      items: [
+        '<div class="text-gray-700"><span class="text-gray-500">Filtering for:</span> "parental leave" + "medical extension" + "precedent"</div>',
+        '<div class="text-gray-700"><span class="text-gray-500">Excluding:</span> Standard duration cases, routine approvals</div>',
+        '<div class="text-gray-700"><span class="text-gray-500">Prioritizing:</span> Exception approvals, medical complications, policy interpretations</div>',
+        '<div class="text-gray-700"><span class="text-gray-500">Time range:</span> Last 7 years of precedents</div>'
+      ]
+    },
+    {
+      title: 'Mining relevant precedents',
+      items: [
+        '<div>Found 23 relevant cases with medical extensions</div>',
+        '<div>Analyzing approval patterns and rationale</div>',
+        '<div>Extracting policy citations and decision criteria</div>',
+        '<div>Identifying similar circumstances and outcomes</div>'
+      ]
+    },
+    {
+      title: 'Generating response',
+      items: [
+        '<div>Structuring precedent summary</div>',
+        '<div>Adding source citations from: HR Policy Manual Section 4.2, ServiceNow Cases, Nexus Documents</div>',
+        '<div>Confidence level: High (89%)</div>',
+        '<div>Response ready for review</div>'
+      ]
+    }
+  ];
+
+  let currentAccordionIndex = 0;
+
+  function showNextAccordion() {
+    if (currentAccordionIndex >= accordionData.length) {
+      // All accordions done, show "Analysis complete"
+      setTimeout(() => {
+        const completeMsg = document.createElement('div');
+        completeMsg.className = 'flex items-center gap-1.5 text-xs text-green-600';
+        completeMsg.style.marginTop = '1rem';
+        completeMsg.style.opacity = '0';
+        completeMsg.style.transition = 'opacity 0.3s ease';
+        completeMsg.innerHTML = `
+          <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+          <span>Analysis complete (10.2 seconds)</span>
+        `;
+        container.appendChild(completeMsg);
+        lucide.createIcons();
+        setTimeout(() => { completeMsg.style.opacity = '1'; }, 50);
+
+        // Automatically move to step 3 after showing completion message
+        setTimeout(() => {
+          goToStep(3);
+        }, 1500);
+      }, 300);
+      return;
+    }
+
+    const data = accordionData[currentAccordionIndex];
+    const accordionId = `accordion-${currentAccordionIndex}`;
+
+    // Create accordion element
+    const details = document.createElement('details');
+    details.className = 'group';
+    details.id = accordionId;
+    details.open = true;
+    details.style.opacity = '0';
+    details.style.transition = 'opacity 0.3s ease';
+
+    details.innerHTML = `
+      <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
+        <span>${data.title}</span>
+      </summary>
+      <div class="mt-2 p-3 rounded-lg space-y-2 text-sm accordion-content" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
+        <!-- Items will be added here -->
+      </div>
+    `;
+
+    container.appendChild(details);
+    lucide.createIcons();
+
+    // Fade in accordion
+    setTimeout(() => { details.style.opacity = '1'; }, 50);
+
+    // Animate items one by one
+    const contentDiv = details.querySelector('.accordion-content');
+    let itemIndex = 0;
+
+    function showNextItem() {
+      if (itemIndex >= data.items.length) {
+        // All items shown, close accordion and move to next
+        setTimeout(() => {
+          details.open = false;
+          currentAccordionIndex++;
+          showNextAccordion();
+        }, 500);
+        return;
+      }
+
+      const itemDiv = document.createElement('div');
+      itemDiv.innerHTML = data.items[itemIndex];
+      itemDiv.style.opacity = '0';
+      itemDiv.style.transition = 'opacity 0.2s ease';
+      contentDiv.appendChild(itemDiv);
+
+      setTimeout(() => { itemDiv.style.opacity = '1'; }, 50);
+
+      itemIndex++;
+      setTimeout(showNextItem, 600); // Show next item after 600ms
+    }
+
+    // Start showing items after accordion appears
+    setTimeout(showNextItem, 400);
+  }
+
+  // Start the animation
+  showNextAccordion();
+}
 
 /* ────── Init ────── */
 buildDots();

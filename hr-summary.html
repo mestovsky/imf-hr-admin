@@ -23,6 +23,7 @@
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+    html { font-size: 17px; }
     body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: #1E293B; position: relative; }
 
     /* Side panel mode */
@@ -1053,8 +1054,8 @@ function promptCards() {
   ];
   return `<div class="max-w-[1000px] mx-auto"><div class="prompt-cards-container flex gap-3 mt-6 fade-in" style="flex-wrap: nowrap; align-items: stretch; justify-content: center;">${items.map(i => {
     const iconHtml = i.isCustom
-      ? `<img src="${i.icon}" class="w-4 h-4 flex-shrink-0" alt="" />`
-      : `<i data-lucide="${i.icon}" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i>`;
+      ? `<img src="${i.icon}" class="w-5 h-5 flex-shrink-0" alt="" />`
+      : `<i data-lucide="${i.icon}" class="w-5 h-5 flex-shrink-0" style="color: #2256A6;"></i>`;
     return `<button onclick="fillPrompt('${i.t}')" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1; min-width: 200px;">${iconHtml}<span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">${i.t}</span></button>`;
   }).join('')}</div></div>`;
 }
@@ -1245,7 +1246,17 @@ function generateDraftLetterHTML() {
         </div>
       </div>
 
-      <div class="inline-flex rounded-lg shadow-sm" role="group">
+      <div class="flex items-center gap-2">
+        <div class="inline-flex gap-1">
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none rounded" title="Undo">
+            <i data-lucide="undo" class="w-5 h-5"></i>
+          </button>
+          <button type="button" disabled class="p-2 text-gray-400 bg-transparent border-none rounded cursor-not-allowed" title="Redo">
+            <i data-lucide="redo" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="inline-flex rounded-lg shadow-sm" role="group">
         <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
           <i data-lucide="history" class="w-4 h-4"></i>
           Versions
@@ -1258,6 +1269,7 @@ function generateDraftLetterHTML() {
           <i data-lucide="book-open-check" class="w-4 h-4"></i>
           Provenance
         </button>
+        </div>
       </div>
     </div>
 
@@ -1591,11 +1603,11 @@ function generateCasePreviewHTML(caseId) {
       <!-- Auto-suggestions -->
       <div class="flex gap-3 mb-4">
         <button onclick="openDraftEmailCanvas()" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
-          <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
+          <img src="icons/pen-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" />
           <span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Generate a draft response email based on this case</span>
         </button>
         <button onclick="fillPrompt('Generate a draft request to retrieve medical documents')" class="act-btn flex flex-col items-start gap-2 px-4 py-3 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1;">
-          <img src="icons/pen-sparkle.svg" class="w-4 h-4 flex-shrink-0" alt="" />
+          <img src="icons/pen-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" />
           <span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Generate a draft request to retrieve medical documents</span>
         </button>
       </div>
@@ -1800,7 +1812,17 @@ function generateHRSummaryHTML() {
           </div>
         </div>
 
-        <div class="inline-flex rounded-lg shadow-sm" role="group">
+        <div class="flex items-center gap-2">
+          <div class="inline-flex gap-1">
+            <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none rounded" title="Undo">
+              <i data-lucide="undo" class="w-5 h-5"></i>
+            </button>
+            <button type="button" disabled class="p-2 text-gray-400 bg-transparent border-none rounded cursor-not-allowed" title="Redo">
+              <i data-lucide="redo" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <div class="inline-flex rounded-lg shadow-sm" role="group">
           <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
             <i data-lucide="history" class="w-4 h-4"></i>
             Versions
@@ -1813,6 +1835,7 @@ function generateHRSummaryHTML() {
             <i data-lucide="book-open-check" class="w-4 h-4"></i>
             Provenance
           </button>
+          </div>
         </div>
       </div>
 
@@ -2140,9 +2163,9 @@ function renderUpToStep(step) {
   if (step >= 1 && step < 2) {
     html += ticketBanner();
     html += `<div class="flex gap-3 my-6 fade-in" style="flex-wrap: nowrap; align-items: stretch;">
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="search" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Find similar parental leave precedents</span></button>
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="file-check" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">What documentation is required for medical cases?</span></button>
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0" style="color: #2256A6;"></i><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Check current parental leave policy requirements</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/search-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Find similar parental leave precedents</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/chat-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">What documentation is required for medical cases?</span></button>
+      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/action-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Check current parental leave policy requirements</span></button>
     </div>`;
   }
 
@@ -2448,18 +2471,18 @@ function renderUpToStep(step) {
       <div class="flex flex-wrap gap-2 mb-3">
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
           Open in ServiceNow
-          <i data-lucide="external-link" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="external-link" class="w-5 h-5 text-imf-blue"></i>
         </button>
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="refresh-cw" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-imf-blue"></i>
           Update Ticket Status
         </button>
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="layout-template" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="layout-template" class="w-5 h-5 text-imf-blue"></i>
           Save to Templates
         </button>
         <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="message-circle" class="w-4 h-4 text-imf-blue"></i>
+          <i data-lucide="message-circle" class="w-5 h-5 text-imf-blue"></i>
           Start New Chat
         </button>
       </div>
