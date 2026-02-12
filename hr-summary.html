@@ -1725,6 +1725,78 @@ function generateHRSummaryHTML() {
 
     <div class="border-b border-gray-200 mb-6" style="margin-left: -1.5rem; margin-right: -1.5rem; margin-bottom: 8px;"></div>
 
+    <!-- WYSIWYG Controls -->
+    <div class="flex items-center justify-between gap-2 px-6 pb-3" style="border-bottom: 1px solid #E5E7EB; padding-top: 0.75rem; margin-left: 1.5rem; margin-right: 1.5rem;">
+      <div class="flex items-center gap-2">
+        <div class="relative">
+          <button onclick="toggleEnhanceMenu()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium cursor-pointer" style="background: white; border: 1px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg, #527FFF, #AF81FF); background-origin: border-box; background-clip: padding-box, border-box; color: #1e3a8a; font-size: 0.8rem;">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            Enhance with AI
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+          </button>
+
+          <div id="enhance-menu" class="hidden absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Adjust to comply with IMF policies
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Make text shorter
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Change to tone of voice to friendly
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Change to tone of voice to official
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Just fix the language errors
+            </button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer">
+              Translate to...
+            </button>
+          </div>
+        </div>
+
+        <div class="inline-flex items-center gap-1" role="group">
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+            <i data-lucide="bold" class="w-5 h-5"></i>
+          </button>
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+            <i data-lucide="italic" class="w-5 h-5"></i>
+          </button>
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none">
+            <i data-lucide="underline" class="w-5 h-5"></i>
+          </button>
+
+          <div class="border-l border-gray-200" style="height: 24px;"></div>
+
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
+            <i data-lucide="a-large-small" class="w-5 h-5"></i>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+          <button type="button" class="p-2 text-gray-700 hover:bg-gray-50 cursor-pointer bg-transparent border-none inline-flex items-center gap-1">
+            <i data-lucide="paint-bucket" class="w-5 h-5"></i>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="inline-flex rounded-lg shadow-sm" role="group">
+        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+          <i data-lucide="history" class="w-4 h-4"></i>
+          Versions
+        </button>
+        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+          <i data-lucide="quote" class="w-4 h-4"></i>
+          Citations
+        </button>
+        <button type="button" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+          <i data-lucide="book-open-check" class="w-4 h-4"></i>
+          Provenance
+        </button>
+      </div>
+    </div>
+
     <!-- Summary Document Container -->
     <div class="bg-white rounded-lg border border-gray-200 mb-4" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-left: 3rem; margin-right: 3rem; margin-top: 3rem;">
 
