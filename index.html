@@ -1641,20 +1641,18 @@ function renderUpToStep(step) {
   if (step <= 1) {
     html += `<div class="text-center pt-0 pb-4 fade-in">
       <div class="relative inline-block mx-auto mb-4">
-        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block;">
+        <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: cover; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0;">
+          <source src="icons/ai-bg-shade.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: relative; z-index: 1;">
           <source src="icons/ai-char-white.mp4" type="video/mp4">
           <source src="icons/ai-char-white.mov" type="video/quicktime">
           Your browser does not support the video tag.
         </video>
-        <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none;">
+        <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none; z-index: 2;">
           <i data-lucide="sparkles" class="w-8 h-8" style="color:#fff;"></i>
         </div>
-      </div>
-      <div class="relative mx-auto mb-4" style="width: 160px; height: 160px; margin-top: -2rem;">
-        <video autoplay loop muted playsinline style="width: 160px; height: 160px; object-fit: cover; display: block;">
-          <source src="icons/ai-bg-shade.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
       </div>
       <h2 class="font-semibold text-gray-800 mb-1" style="font-size: 1.7rem;">Hi John, how can I help you today?</h2>
     </div>`;
