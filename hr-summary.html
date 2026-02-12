@@ -1654,6 +1654,18 @@ function renderHRSummary() {
   m.innerHTML = html;
   lucide.createIcons();
 
+  // Show bottom input area
+  const bottomInputArea = document.getElementById('bottom-input-area');
+  if (bottomInputArea) {
+    bottomInputArea.style.display = 'block';
+  }
+
+  // Update title
+  const titleEl = document.getElementById('conv-title');
+  if (titleEl) {
+    titleEl.textContent = 'Open cases summary';
+  }
+
   // Auto-open the summary panel
   setTimeout(() => {
     openSummaryCanvas();
