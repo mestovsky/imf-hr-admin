@@ -1184,8 +1184,11 @@ function generateDraftLetterHTML() {
 
     <div class="border-b border-gray-200 mb-6" style="margin-left: -1.5rem; margin-right: -1.5rem; margin-bottom: 8px;"></div>
 
-    <!-- Editor Container with Shadow -->
-    <div class="bg-white rounded-lg border border-gray-200 mb-4" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12); margin-left: 3rem; margin-right: 3rem; margin-top: 3rem;">
+    <!-- Editing Area Row (can be split into editor + citations) -->
+    <div class="flex gap-0" style="margin-left: 3rem; margin-right: 3rem; margin-top: 3rem;">
+
+      <!-- Editor Container with Shadow -->
+      <div class="flex-1 bg-white rounded-lg border border-gray-200 mb-4" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12);" id="editor-container">
 
       <!-- Email Header Section -->
       <div class="px-6 py-4" style="background: #F9FAFB; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
@@ -1330,7 +1333,15 @@ function generateDraftLetterHTML() {
         International Monetary Fund
       </p>
       </div>
+      </div>
+      <!-- End of Editor Container -->
+
+      <!-- Citations Panel (appears on right when opened) -->
+      <div id="citations-panel-inline" style="display: none; width: 340px; min-width: 340px; border-left: 1px solid #E5E7EB; padding-left: 1.5rem; margin-left: 1.5rem;">
+      </div>
+
     </div>
+    <!-- End of Editing Area Row -->
   `;
 }
 
@@ -1355,19 +1366,24 @@ function closeCanvas() {
 }
 
 function openCitationsPanel() {
-  const panel = document.getElementById('citations-panel');
-  const content = document.getElementById('citations-content');
+  const panel = document.getElementById('citations-panel-inline');
 
-  content.innerHTML = generateCitationsHTML();
-  panel.classList.add('open');
+  if (panel) {
+    panel.innerHTML = generateCitationsHTML();
+    panel.style.display = 'block';
 
-  // Reinitialize Lucide icons
-  lucide.createIcons();
+    // Reinitialize Lucide icons
+    lucide.createIcons();
+  }
 }
 
 function closeCitationsPanel() {
-  const panel = document.getElementById('citations-panel');
-  panel.classList.remove('open');
+  const panel = document.getElementById('citations-panel-inline');
+
+  if (panel) {
+    panel.style.display = 'none';
+    panel.innerHTML = '';
+  }
 }
 
 function generateCitationsHTML() {
