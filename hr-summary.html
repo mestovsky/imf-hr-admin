@@ -982,6 +982,10 @@ function buildDots() {
 function goToStep(n) {
   if (n < 0 || n >= totalSteps) return;
   currentStep = n;
+
+  // Close citations panel when navigating to next step
+  closeCitationsPanel();
+
   buildDots();
   renderUpToStep(currentStep);
 
