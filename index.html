@@ -1345,6 +1345,9 @@ function generateDraftLetterHTML() {
 function closeCanvas() {
   const panel = document.getElementById('canvas-panel');
   panel.classList.remove('open');
+
+  // Also close citations panel when closing canvas
+  closeCitationsPanel();
 }
 
 function openCitationsPanel() {
