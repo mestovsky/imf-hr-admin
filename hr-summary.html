@@ -1282,7 +1282,7 @@ function generateDraftLetterHTML() {
           <i data-lucide="history" class="w-4 h-4"></i>
           Versions
         </button>
-        <button type="button" onclick="openCitationsPanel()" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
+        <button type="button" id="citations-btn" onclick="toggleCitationsPanel()" class="inline-flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10" style="font-size: 0.8rem; font-weight: 400;">
           <i data-lucide="quote" class="w-4 h-4"></i>
           Citations
         </button>
@@ -1337,7 +1337,7 @@ function generateDraftLetterHTML() {
       <!-- End of Editor Container -->
 
       <!-- Citations Panel (appears on right when opened) -->
-      <div id="citations-panel-inline" style="display: none; width: 340px; min-width: 340px; border-left: 1px solid #E5E7EB; padding-left: 1.5rem; margin-left: 1.5rem;">
+      <div id="citations-panel-inline" style="display: none; width: 340px; min-width: 340px; padding-left: 1.5rem; margin-left: 1.5rem;">
       </div>
 
     </div>
@@ -1365,12 +1365,30 @@ function closeCanvas() {
   }
 }
 
+function toggleCitationsPanel() {
+  const panel = document.getElementById('citations-panel-inline');
+  const btn = document.getElementById('citations-btn');
+
+  if (panel && panel.style.display === 'block') {
+    closeCitationsPanel();
+  } else {
+    openCitationsPanel();
+  }
+}
+
 function openCitationsPanel() {
   const panel = document.getElementById('citations-panel-inline');
+  const btn = document.getElementById('citations-btn');
 
   if (panel) {
     panel.innerHTML = generateCitationsHTML();
     panel.style.display = 'block';
+
+    // Set button to active state
+    if (btn) {
+      btn.style.backgroundColor = '#F3F4F6';
+      btn.style.color = '#111827';
+    }
 
     // Reinitialize Lucide icons
     lucide.createIcons();
@@ -1379,16 +1397,23 @@ function openCitationsPanel() {
 
 function closeCitationsPanel() {
   const panel = document.getElementById('citations-panel-inline');
+  const btn = document.getElementById('citations-btn');
 
   if (panel) {
     panel.style.display = 'none';
     panel.innerHTML = '';
   }
+
+  // Reset button to normal state
+  if (btn) {
+    btn.style.backgroundColor = 'white';
+    btn.style.color = '#374151';
+  }
 }
 
 function generateCitationsHTML() {
   return `
-    <div class="flex items-center justify-between pb-4 mb-4" style="border-bottom: 1px solid #E5E7EB;">
+    <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-semibold text-gray-900">Cited sources</h3>
       <button onclick="closeCitationsPanel()" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
         <i data-lucide="x" class="w-4 h-4"></i>
