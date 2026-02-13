@@ -88,7 +88,8 @@
     /* Citations Panel */
     .citations-panel {
       width: 0; min-width: 0; overflow: hidden; opacity: 0;
-      border-left: 0 solid #E2E8F0;
+      border-left: 0 solid #E5E7EB;
+      background: #FAFAFA;
       transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease, min-width 0.35s ease, border-left-width 0.2s ease;
     }
     .citations-panel.open { width: 420px; min-width: 420px; opacity: 1; border-left-width: 1px; }
@@ -1368,10 +1369,10 @@ function closeCitationsPanel() {
 
 function generateCitationsHTML() {
   return `
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-semibold text-gray-800">Cited sources</h2>
-      <button onclick="closeCitationsPanel()" class="p-2 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
-        <i data-lucide="x" class="w-5 h-5"></i>
+    <div class="flex items-center justify-between pb-4 mb-4" style="border-bottom: 1px solid #E5E7EB;">
+      <h3 class="text-lg font-semibold text-gray-900">Cited sources</h3>
+      <button onclick="closeCitationsPanel()" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
     </div>
 
