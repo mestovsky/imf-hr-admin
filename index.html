@@ -304,7 +304,7 @@
       <!-- Agent label -->
       <button onclick="toggleAccordion('agent-section')" class="w-full flex items-center justify-between px-2 mb-1.5 mt-3 bg-transparent border-none cursor-pointer text-left">
         <p class="text-[10px] font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.6);">Agent</p>
-        <i id="agent-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.4);"></i>
+        <i id="agent-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.6);"></i>
       </button>
 
       <!-- Module selector -->
@@ -312,7 +312,7 @@
         <button onclick="document.getElementById('sel-dd').classList.toggle('open')" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left cursor-pointer border-none" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.9);">
           <i data-lucide="book-open-check" class="w-4 h-4 flex-shrink-0" style="color:rgba(255,255,255,0.6);"></i>
           <span class="flex-1 truncate" id="sel-label">HR Policy Research</span>
-          <i data-lucide="chevron-down" class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(255,255,255,0.4);"></i>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(255,255,255,0.6);"></i>
         </button>
         <div id="sel-dd" class="sel-menu absolute left-0 right-0 mt-1 rounded-lg py-1 z-50" style="background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.18); border:1px solid #E2E8F0;">
           <div class="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Select Agent</div>
@@ -355,7 +355,7 @@
     <!-- Chats label -->
     <button onclick="toggleAccordion('chats-section')" class="w-full flex items-center justify-between px-2 mb-2 flex-shrink-0 bg-transparent border-none cursor-pointer text-left">
       <p class="text-[10px] font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.6);">Chats</p>
-      <i id="chats-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.4);"></i>
+      <i id="chats-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.6);"></i>
     </button>
 
     <!-- Filter chips -->
@@ -1589,9 +1589,9 @@ function generateCasePreviewHTML(caseId) {
         <div class="grid grid-cols-2" style="font-size: 0.8rem; gap: 0.4rem;">
           <div><span style="color: #6B7785;">Date Created:</span> <span class="text-gray-800">March 15, 2023</span></div>
           <div><span style="color: #6B7785;">Date Resolved:</span> <span class="text-gray-800">March 22, 2023</span></div>
-          <div><span style="color: #6B7785;">Category:</span> <span class="tag" style="background:rgba(107,114,128,0.1); color:#6b7280; font-size: 0.8rem;">Leave & Absence</span></div>
-          <div><span style="color: #6B7785;">Jurisdiction:</span> <span class="tag" style="background:rgba(107,114,128,0.1); color:#6b7280; font-size: 0.8rem;">Human Resources Department</span></div>
-          <div><span style="color: #6B7785;">Status:</span> <span class="tag" style="background:rgba(52,211,153,0.2); color:#059669; font-size: 0.8rem;">Resolved</span></div>
+          <div><span style="color: #6B7785;">Category:</span> <span class="tag" style="background:rgba(107,114,128,0.1); color:#686E7D; font-size: 0.8rem;">Leave & Absence</span></div>
+          <div><span style="color: #6B7785;">Jurisdiction:</span> <span class="tag" style="background:rgba(107,114,128,0.1); color:#686E7D; font-size: 0.8rem;">Human Resources Department</span></div>
+          <div><span style="color: #6B7785;">Status:</span> <span class="tag" style="background:rgba(52,211,153,0.2); color:#057A55; font-size: 0.8rem;">Resolved</span></div>
           <div><span style="color: #6B7785;">Priority:</span> <span class="text-gray-800">Medium</span></div>
           <div class="col-span-2 flex items-center">
             <span style="color: #6B7785;">Assigned To:&nbsp;</span>
@@ -1709,14 +1709,14 @@ function generateCasePreviewHTML(caseId) {
               <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
               <div class="flex items-center justify-between flex-1">
                 <span class="font-medium">Case #2022-128</span>
-                <span class="text-green-600 text-xs">Similar - 8 weeks approved</span>
+                <span class="text-xs" style="color:#04865D;">Similar - 8 weeks approved</span>
               </div>
             </a>
             <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
               <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
               <div class="flex items-center justify-between flex-1">
                 <span class="font-medium">Case #2021-095</span>
-                <span class="text-green-600 text-xs">Similar - 6 weeks approved</span>
+                <span class="text-xs" style="color:#04865D;">Similar - 6 weeks approved</span>
               </div>
             </a>
             <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
@@ -1820,12 +1820,12 @@ function generateCasePreviewHTML(caseId) {
 
       <!-- Section 12: Tags -->
       <div class="flex flex-wrap gap-2 mb-4">
-        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Parental Leave</span>
-        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Medical Exception</span>
-        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Leave Extension</span>
-        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Policy 4.2.3</span>
-        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Approved</span>
-        <span class="tag" style="background:#F3F4F6; color:#6b7280; font-size: 12px;">Precedent</span>
+        <span class="tag" style="background:#F3F4F6; color:#686E7D; font-size: 12px;">Parental Leave</span>
+        <span class="tag" style="background:#F3F4F6; color:#686E7D; font-size: 12px;">Medical Exception</span>
+        <span class="tag" style="background:#F3F4F6; color:#686E7D; font-size: 12px;">Leave Extension</span>
+        <span class="tag" style="background:#F3F4F6; color:#686E7D; font-size: 12px;">Policy 4.2.3</span>
+        <span class="tag" style="background:#F3F4F6; color:#686E7D; font-size: 12px;">Approved</span>
+        <span class="tag" style="background:#F3F4F6; color:#686E7D; font-size: 12px;">Precedent</span>
       </div>
 
       <!-- Section 14: Note -->
@@ -1848,7 +1848,7 @@ function caseCard(id, star, date, dept, ext, justification, outcome, dm) {
       <div><span style="color: #6B7785;">Department:</span> ${dept}</div>
       <div><span style="color: #6B7785;">Extension:</span> ${ext}</div>
       <div><span style="color: #6B7785;">Decision Maker:</span> ${dm}</div>
-      <div><span style="color: #6B7785;">Outcome:</span> <span class="font-medium" style="color:${outcome==='Approved'?'#059669':'#DC2626'}">${outcome}</span></div>
+      <div><span style="color: #6B7785;">Outcome:</span> <span class="font-medium" style="color:${outcome==='Approved'?'#04865D':'#DC2626'}">${outcome}</span></div>
     </div>
     <div class="flex flex-wrap items-center" style="font-size: 0.8rem; gap: 0.8rem;">
       <button onclick="openCasePreview('${id}')" class="font-medium px-3 py-1.5 rounded-md bg-transparent cursor-pointer transition-colors" style="border: 1px solid #004C97; color: #004C97;" onmouseover="this.style.background='#004C97'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#004C97';">Preview document</button>
@@ -2048,7 +2048,7 @@ function renderUpToStep(step) {
             </div>
           </div>
         </details>
-        <span class="tag" style="background:#0C9769; color:#fff;">High Confidence: 92%</span>
+        <span class="tag" style="background:#3B815E; color:#fff;">High Confidence: 92%</span>
       </div>
       <p class="text-sm text-gray-800 leading-relaxed mb-4">I've searched across HR repositories and found <strong>8 relevant precedents</strong> for parental leave extensions due to medical circumstances. Based on ticket REQ0012345, the most relevant case is <strong><a href="#" onclick="goToStep(4); return false;" class="text-imf-blue hover:underline cursor-pointer">Case #2023-045</a></strong> (similar medical circumstances).</p>
       <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Precedent Categories</p>
@@ -2128,7 +2128,7 @@ function renderUpToStep(step) {
           Draft completed
           <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
         </span>
-        <span class="tag" style="background:#0C9769; color:#fff;">High Confidence: 95%</span>
+        <span class="tag" style="background:#3B815E; color:#fff;">High Confidence: 95%</span>
       </div>
       <p class="mb-3">I generated a draft message for your employee with approval confirmation and next steps.</p>
     `);
