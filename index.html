@@ -166,6 +166,7 @@
     .chat-input-container { transition: border-color 0.2s ease; }
     .chat-input-container:focus-within { border-color: #2256A6 !important; }
     .chat-input:focus { outline: none; }
+    .chat-input::placeholder { color: rgba(31, 41, 55, 0.6); }
 
     /* Prompt cards - stack vertically in side panel mode */
     #app-container.side-panel-mode .prompt-cards-container {
@@ -374,8 +375,8 @@
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="open" onclick="goToStep(1)">
         <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Parental leave extension precedents</p>
         <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0012345</span>
-          <span class="tag" style="background:rgba(59,130,246,0.2); color:#93C5FD;">In Progress</span>
+          <span class="tag" style="background:rgba(251,191,36,0.25); color:#B36205;">&#127915; REQ0012345</span>
+          <span class="tag" style="background:rgba(59,130,246,0.2); color:#1A5CEA;">In Progress</span>
         </div>
       </div>
 
@@ -405,7 +406,7 @@
         <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Salary advance policy clarification</p>
         <div class="flex items-center gap-1.5 mt-1.5">
           <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011987</span>
-          <span class="tag" style="background:rgba(248,113,113,0.25); color:#FCA5A5;">Escalated</span>
+          <span class="tag" style="background:rgba(248,113,113,0.25); color:#FDB4B4;">Escalated</span>
         </div>
       </div>
 
@@ -1070,7 +1071,7 @@ function ticketBanner() {
   return `<div class="fade-in rounded-xl px-4 py-3 flex flex-wrap items-center gap-3 text-sm" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A20); border:1px solid #FDE68A;">
     <span class="text-lg">&#127915;</span>
     <div class="flex-1" style="min-width: 200px;">
-      <span class="font-semibold text-amber-900">REQ0012345:&nbsp;</span>
+      <span class="font-semibold" style="color:#B36205;">REQ0012345:&nbsp;</span>
       <span class="text-amber-800">Parental leave extension request</span>
       <p class="text-amber-800 text-xs mt-0.5">John Smith (Finance Dept)</p>
       <div class="mt-0">
@@ -1078,7 +1079,7 @@ function ticketBanner() {
       </div>
       <div class="flex items-center gap-1.5 mt-0">
         <span class="text-amber-800 text-xs">Status:</span>
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background:rgba(59,130,246,0.2); color:#3B82F6;">In Progress</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background:rgba(59,130,246,0.2); color:#1A5CEA;">In Progress</span>
       </div>
     </div>
     <div class="flex gap-2">
@@ -1106,11 +1107,11 @@ function promptCards() {
 
 function feedbackBtns() {
   return `<div class="flex items-center gap-1 mt-3" style="border-top:1px solid #F1F5F9;">
-    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
-    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Helpful"><i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i></button>
-    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Not helpful"><i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i></button>
-    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Edit"><i data-lucide="square-pen" class="w-3.5 h-3.5"></i></button>
-    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Share"><i data-lucide="share-2" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer" style="color:#6B7785;" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer" style="color:#6B7785;" title="Helpful"><i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer" style="color:#6B7785;" title="Not helpful"><i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer" style="color:#6B7785;" title="Edit"><i data-lucide="square-pen" class="w-3.5 h-3.5"></i></button>
+    <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer" style="color:#6B7785;" title="Share"><i data-lucide="share-2" class="w-3.5 h-3.5"></i></button>
   </div>`;
 }
 
@@ -1690,15 +1691,15 @@ function generateCasePreviewHTML(caseId) {
         <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Cited Policies</p>
         <div class="space-y-2 mb-4">
           <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
-            <i data-lucide="book-check" class="w-4 h-4 flex-shrink-0"></i>
+            <i data-lucide="book-check" class="w-5 h-5 flex-shrink-0"></i>
             <span>HR Policy 4.2.3 - Parental Leave Extensions</span>
           </a>
           <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
-            <i data-lucide="book-check" class="w-4 h-4 flex-shrink-0"></i>
+            <i data-lucide="book-check" class="w-5 h-5 flex-shrink-0"></i>
             <span>HR Guidelines Section 8.1 - Medical Exceptions</span>
           </a>
           <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
-            <i data-lucide="book-check" class="w-4 h-4 flex-shrink-0"></i>
+            <i data-lucide="book-check" class="w-5 h-5 flex-shrink-0"></i>
             <span>Staff Rules Article XII - Leave Provisions</span>
           </a>
         </div>
@@ -1706,21 +1707,21 @@ function generateCasePreviewHTML(caseId) {
           <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Related Cases Reviewed</p>
           <div class="space-y-2">
             <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
-              <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
+              <i data-lucide="history" class="w-5 h-5 flex-shrink-0"></i>
               <div class="flex items-center justify-between flex-1">
                 <span class="font-medium">Case #2022-128</span>
                 <span class="text-xs" style="color:#04865D;">Similar - 8 weeks approved</span>
               </div>
             </a>
             <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
-              <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
+              <i data-lucide="history" class="w-5 h-5 flex-shrink-0"></i>
               <div class="flex items-center justify-between flex-1">
                 <span class="font-medium">Case #2021-095</span>
                 <span class="text-xs" style="color:#04865D;">Similar - 6 weeks approved</span>
               </div>
             </a>
             <a href="#" class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors" style="font-size: 0.8rem; text-decoration: none; color: #004C97;">
-              <i data-lucide="history" class="w-4 h-4 flex-shrink-0"></i>
+              <i data-lucide="history" class="w-5 h-5 flex-shrink-0"></i>
               <div class="flex items-center justify-between flex-1">
                 <span class="font-medium">Case #2023-012</span>
                 <span class="text-gray-500 text-xs">Different circumstances</span>
@@ -1921,7 +1922,7 @@ function renderUpToStep(step) {
           <div class="flex items-center gap-1">
             <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="paperclip" class="w-[18px] h-[18px]"></i></button>
             <button onclick="openToolsModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="sliders-horizontal" class="w-[18px] h-[18px]"></i><span class="text-sm">Tools</span></button>
-            ${step >= 1 ? '<div class="flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1" style="background: transparent; border: 1px solid #F59E0B; color: #D97706; padding-top: 0.25rem; padding-bottom: 0.25rem;"><span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #D97706;"><i data-lucide="x" class="w-3 h-3"></i></button></div>' : ''}
+            ${step >= 1 ? '<div class="flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1" style="background: transparent; border: 1px solid #F59E0B; color: #B36205; padding-top: 0.25rem; padding-bottom: 0.25rem;"><span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #B36205;"><i data-lucide="x" class="w-3 h-3"></i></button></div>' : ''}
           </div>
           <div class="flex items-center gap-1">
             <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="mic" class="w-[18px] h-[18px]"></i></button>
@@ -2048,7 +2049,7 @@ function renderUpToStep(step) {
             </div>
           </div>
         </details>
-        <span class="tag" style="background:#3B815E; color:#fff;">High Confidence: 92%</span>
+        <span class="tag" style="background:#0A855C; color:#fff;">High Confidence: 92%</span>
       </div>
       <p class="text-sm text-gray-800 leading-relaxed mb-4">I've searched across HR repositories and found <strong>8 relevant precedents</strong> for parental leave extensions due to medical circumstances. Based on ticket REQ0012345, the most relevant case is <strong><a href="#" onclick="goToStep(4); return false;" class="text-imf-blue hover:underline cursor-pointer">Case #2023-045</a></strong> (similar medical circumstances).</p>
       <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Precedent Categories</p>
@@ -2128,7 +2129,7 @@ function renderUpToStep(step) {
           Draft completed
           <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
         </span>
-        <span class="tag" style="background:#3B815E; color:#fff;">High Confidence: 95%</span>
+        <span class="tag" style="background:#0A855C; color:#fff;">High Confidence: 95%</span>
       </div>
       <p class="mb-3">I generated a draft message for your employee with approval confirmation and next steps.</p>
     `);
@@ -2206,8 +2207,8 @@ function renderUpToStep(step) {
   if (ticketChipBottom) {
     if (step >= 1) {
       ticketChipBottom.className = 'flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1';
-      ticketChipBottom.style.cssText = 'background: transparent; border: 1px solid #F59E0B; color: #D97706; padding-top: 0.25rem; padding-bottom: 0.25rem;';
-      ticketChipBottom.innerHTML = '<span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #D97706;"><i data-lucide="x" class="w-3 h-3"></i></button>';
+      ticketChipBottom.style.cssText = 'background: transparent; border: 1px solid #F59E0B; color: #B36205; padding-top: 0.25rem; padding-bottom: 0.25rem;';
+      ticketChipBottom.innerHTML = '<span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #B36205;"><i data-lucide="x" class="w-3 h-3"></i></button>';
     } else {
       ticketChipBottom.className = 'hidden';
       ticketChipBottom.innerHTML = '';
