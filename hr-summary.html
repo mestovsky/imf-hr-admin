@@ -292,16 +292,16 @@
           <i data-lucide="chevron-down" class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(255,255,255,0.4);"></i>
         </button>
         <div id="sel-dd" class="sel-menu absolute left-0 right-0 mt-1 rounded-lg py-1 z-50" style="background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.18); border:1px solid #E2E8F0;">
-          <div class="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Switch Module</div>
+          <div class="px-2 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Select Agent</div>
           <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="book-open-check" class="w-4 h-4 text-imf-accent"></i>HR Policy Research</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="scale" class="w-4 h-4 text-imf-accent"></i>Ethics Guide</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="plane" class="w-4 h-4 text-imf-accent"></i>Travel Guide</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="scale" class="w-4 h-4 text-gray-400"></i>Ethics Guide</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="plane" class="w-4 h-4 text-gray-400"></i>Travel Guide</button>
           <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="landmark" class="w-4 h-4 text-imf-accent"></i>Surveillance &amp; Lending Hub</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="shield-check" class="w-4 h-4 text-imf-accent"></i>Fin Safeguard</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="file-text" class="w-4 h-4 text-imf-accent"></i>TA Report Copilot</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="gavel" class="w-4 h-4 text-imf-accent"></i>SEC Board Keeper</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="scan-search" class="w-4 h-4 text-imf-accent"></i>Analyze Documents</button>
-          <button onclick="pickModule(this)" class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 bg-transparent border-none cursor-pointer"><i data-lucide="languages" class="w-4 h-4 text-imf-accent"></i>Translate Documents</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="shield-check" class="w-4 h-4 text-gray-400"></i>Fin Safeguard</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i>TA Report Copilot</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="gavel" class="w-4 h-4 text-gray-400"></i>SEC Board Keeper</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="scan-search" class="w-4 h-4 text-gray-400"></i>Analyze Documents</button>
+          <button disabled class="sel-opt flex items-center gap-2 w-full text-left px-3 py-2 text-sm text-gray-400 bg-transparent border-none cursor-not-allowed opacity-50"><i data-lucide="languages" class="w-4 h-4 text-gray-400"></i>Translate Documents</button>
         </div>
       </div>
     </div>
@@ -926,7 +926,15 @@ function toggleAccordion(sectionId) {
 
 /* ────── Module selector ────── */
 function pickModule(btn) {
-  document.getElementById('sel-label').textContent = btn.textContent.trim();
+  const moduleName = btn.textContent.trim();
+
+  // Navigate to specific page for Surveillance & Lending Hub
+  if (moduleName === 'Surveillance & Lending Hub') {
+    window.location.href = 'surb-lend-hub.html';
+    return;
+  }
+
+  document.getElementById('sel-label').textContent = moduleName;
   document.getElementById('sel-dd').classList.remove('open');
 }
 document.addEventListener('click', e => {

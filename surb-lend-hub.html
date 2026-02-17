@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IMF AIDA &mdash; HR Policy Research</title>
+  <title>IMF AIDA &mdash; Surveillance and Lending Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -268,16 +268,6 @@
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-
-    /* Citation tags in letter - hidden by default */
-    .citation-tag {
-      display: none !important;
-    }
-
-    /* Show citation tags when citations are visible */
-    body.citations-visible .citation-tag {
-      display: inline-flex !important;
-    }
   </style>
 </head>
 <body>
@@ -310,8 +300,8 @@
       <!-- Module selector -->
       <div id="agent-section" class="relative" id="module-sel">
         <button onclick="document.getElementById('sel-dd').classList.toggle('open')" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left cursor-pointer border-none" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.9);">
-          <i data-lucide="book-open-check" class="w-4 h-4 flex-shrink-0" style="color:rgba(255,255,255,0.6);"></i>
-          <span class="flex-1 truncate" id="sel-label">HR Policy Research</span>
+          <i data-lucide="landmark" class="w-4 h-4 flex-shrink-0" style="color:rgba(255,255,255,0.6);"></i>
+          <span class="flex-1 truncate" id="sel-label">Surveillance & Lending Hub</span>
           <i data-lucide="chevron-down" class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(255,255,255,0.4);"></i>
         </button>
         <div id="sel-dd" class="sel-menu absolute left-0 right-0 mt-1 rounded-lg py-1 z-50" style="background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.18); border:1px solid #E2E8F0;">
@@ -333,15 +323,11 @@
     <div id="agent-section-nav" class="flex-shrink-0 px-1 mb-4">
       <button id="new-chat-link" onclick="goToStep(0)" class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
         <i data-lucide="message-circle" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
-        <span>New chat</span>
+        <span>New Task</span>
       </button>
-      <button class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
+      <button id="search-explore-link" class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
         <i data-lucide="search" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
         <span>Search & Explore</span>
-      </button>
-      <button class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
-        <i data-lucide="list-todo" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
-        <span>Inquiries</span>
       </button>
       <button class="nav-link w-full flex items-center gap-2.5 pr-3 py-2.5 rounded-lg text-sm bg-transparent border-none cursor-pointer text-left" style="color:rgba(255,255,255,0.9);" onmouseenter="if(!this.classList.contains('active'))this.style.background='rgba(255,255,255,0.08)'" onmouseleave="if(!this.classList.contains('active'))this.style.background='transparent'">
         <i data-lucide="layout-template" class="w-[18px] h-[18px] flex-shrink-0" style="color:rgba(255,255,255,0.7);"></i>
@@ -352,19 +338,18 @@
     <!-- Separator line -->
     <div class="mb-4 flex-shrink-0" style="height: 1px; background: rgba(255,255,255,0.1);"></div>
 
-    <!-- Chats label -->
+    <!-- Tasks label -->
     <button onclick="toggleAccordion('chats-section')" class="w-full flex items-center justify-between px-2 mb-2 flex-shrink-0 bg-transparent border-none cursor-pointer text-left">
-      <p class="text-[10px] font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.6);">Chats</p>
+      <p class="text-[10px] font-semibold uppercase tracking-wider" style="color:rgba(255,255,255,0.6);">Tasks</p>
       <i id="chats-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.4);"></i>
     </button>
 
-    <!-- Filter chips -->
-    <div id="chats-section-filters" class="flex gap-1.5 mb-3 px-1 flex-shrink-0">
-      <button onclick="setFilter(this,'all')" class="filter-chip active text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">All</button>
-      <button onclick="setFilter(this,'cases')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Cases</button>
-      <button onclick="setFilter(this,'chats')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Chats</button>
-      <button onclick="setFilter(this,'open')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Open</button>
-      <button onclick="setFilter(this,'closed')" class="filter-chip text-[12px] font-medium px-2.5 py-1 rounded-full bg-transparent cursor-pointer" style="color:rgba(255,255,255,0.7);">Closed</button>
+    <!-- Search field -->
+    <div id="chats-section-filters" class="mb-3 px-1 flex-shrink-0">
+      <div class="relative">
+        <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 transform -translate-y-1/2" style="color:rgba(255,255,255,0.5);"></i>
+        <input type="text" placeholder="Search tasks..." class="w-full pl-8 pr-2.5 py-1 rounded-full bg-transparent border cursor-pointer" style="color:rgba(255,255,255,0.5); border-color:rgba(255,255,255,0.2); outline:none; font-size: 0.8rem;" />
+      </div>
     </div>
 
     <!-- Conversations list -->
@@ -372,67 +357,43 @@
       <div class="text-[10px] font-semibold uppercase tracking-wider px-2 pt-2 pb-1 conv-date-header" style="color:rgba(255,255,255,0.6);">Today</div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="open" onclick="goToStep(1)">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Parental leave extension precedents</p>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0012345</span>
-          <span class="tag" style="background:rgba(59,130,246,0.2); color:#93C5FD;">In Progress</span>
-        </div>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Multi-document comparative analysis</p>
       </div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Remote work policy for Grade P3</p>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag flex items-center gap-1" style="background:transparent !important; color:rgba(255,255,255,0.9) !important; border: 1px solid rgba(255,255,255,0.3) !important;"><img src="icons/teams_24x1.svg" class="w-3 h-3" alt="" />Teams</span>
-          <span class="tag" style="background:rgba(52,211,153,0.2); color:#6EE7B7;">Resolved</span>
-        </div>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Search & ingest lending documents</p>
       </div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="open">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Telework exceptions during mission travel</p>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag flex items-center gap-1" style="background:transparent !important; color:rgba(255,255,255,0.9) !important; border: 1px solid rgba(255,255,255,0.3) !important;"><img src="icons/outlook_24x1.svg" class="w-3 h-3" alt="" />Outlook</span>
-          <span class="tag" style="background:rgba(148,163,184,0.25); color:#CBD5E1;">Draft</span>
-        </div>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Template editing with AI assistance</p>
       </div>
 
       <div class="text-[10px] font-semibold uppercase tracking-wider px-2 pt-4 pb-1 conv-date-header" style="color:rgba(255,255,255,0.6);">Yesterday</div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="chat" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Per diem rates comparison &mdash; Africa region</p>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Compliance risk flagging in loan docs</p>
       </div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Salary advance policy clarification</p>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011987</span>
-          <span class="tag" style="background:rgba(248,113,113,0.25); color:#FCA5A5;">Escalated</span>
-        </div>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Search criteria refinement & saved queries</p>
       </div>
 
       <div class="text-[10px] font-semibold uppercase tracking-wider px-2 pt-4 pb-1 conv-date-header" style="color:rgba(255,255,255,0.6);">Last 7 Days</div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="chat" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Education grant eligibility &mdash; multiple dependents</p>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Export generated surveillance reports</p>
       </div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Medical leave accrual during external service</p>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011842</span>
-          <span class="tag" style="background:rgba(52,211,153,0.2); color:#6EE7B7;">Resolved</span>
-        </div>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Document ingestion from repository</p>
       </div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="chat" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Hardship allowance recalculation request</p>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Inline citation list review</p>
       </div>
 
       <div class="conv-item rounded-lg px-3 py-2.5 cursor-pointer" data-type="case" data-status="closed">
-        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Spouse employment exemption precedents</p>
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <span class="tag" style="background:rgba(251,191,36,0.25); color:#FCD34D;">&#127915; REQ0011790</span>
-          <span class="tag" style="background:rgba(52,211,153,0.2); color:#6EE7B7;">Resolved</span>
-        </div>
+        <p class="text-sm font-normal truncate" style="color:rgba(255,255,255,0.9);">Difference analysis between versions</p>
       </div>
     </div>
 
@@ -442,7 +403,7 @@
         <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover flex-shrink-0" style="border: 2px solid rgba(255,255,255,0.2);" />
         <div class="min-w-0">
           <p class="text-sm font-medium text-white truncate">John Miller</p>
-          <p class="text-[11px] truncate" style="color:rgba(255,255,255,0.45);">HR Policy Officer</p>
+          <p class="text-[11px] truncate" style="color:rgba(255,255,255,0.45);">Senior Economist</p>
         </div>
         <button class="ml-auto p-1.5 rounded-md bg-transparent border-none cursor-pointer" style="color:rgba(255,255,255,0.4);" title="Settings">
           <i data-lucide="settings" class="w-4 h-4"></i>
@@ -463,18 +424,13 @@
         <button id="side-panel-nav-btn" onclick="toggleSidebar()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-500" style="display:none;" title="Expand navigation">
           <i data-lucide="panel-left" class="w-[18px] h-[18px]"></i>
         </button>
-        <h1 id="conv-title" class="text-base font-semibold text-gray-800">New chat</h1>
+        <h1 id="conv-title" class="text-base font-semibold text-gray-800">Surveillance and Lending Hub</h1>
       </div>
       <div class="flex items-center gap-1.5">
         <button onclick="prevStep()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Previous step"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
         <span class="text-xs font-medium text-gray-500 min-w-[80px] text-center" id="step-label">Step 1 of 10</span>
         <button onclick="nextStep()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Next step"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
         <!-- Minimize/Maximize button -->
-        <div class="ml-2 pl-2" style="border-left: 1px solid #E5E7EB;">
-          <button id="panel-toggle-btn" onclick="togglePanelMode()" class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-400" title="Minimize to side panel">
-            <i data-lucide="minimize" class="w-4 h-4"></i>
-          </button>
-        </div>
       </div>
     </header>
 
@@ -493,11 +449,11 @@
 
         <!-- Input area (bottom fixed - shown from step 3+) -->
         <div id="bottom-input-area" class="flex-shrink-0 px-6 pb-5 pt-2" style="display: none;">
-          <div class="max-w-[760px] mx-auto">
+          <div class="mx-auto">
             <!-- Active filter tags (shown in step 6+) -->
             <div id="filter-tags" class="hidden flex-wrap gap-1.5 mb-2"></div>
             <div class="chat-input-container bg-white rounded-2xl px-4 py-3 border border-gray-200" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
-              <textarea id="chat-input" rows="2" placeholder="Ask me about HR policies, precedents, or cases..." class="chat-input w-full text-sm border-none outline-none bg-transparent text-gray-800 resize-none mb-2" style="line-height: 1.5;" autofocus></textarea>
+              <textarea id="chat-input" rows="2" placeholder="Ask me about surveillance reports, lending programs, or country analysis..." class="chat-input w-full text-sm border-none outline-none bg-transparent text-gray-800 resize-none mb-2" style="line-height: 1.5;" autofocus></textarea>
               <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1">
                   <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="paperclip" class="w-[18px] h-[18px]"></i></button>
@@ -747,7 +703,7 @@ lucide.createIcons();
 
 /* ────── State ────── */
 let currentStep = 0;
-const totalSteps = 8;
+const totalSteps = 1;
 
 /* ────── Tools Modal Functions ────── */
 function openToolsModal() {
@@ -947,9 +903,14 @@ function toggleAccordion(sectionId) {
 function pickModule(btn) {
   const moduleName = btn.textContent.trim();
 
-  // Navigate to specific page for Surveillance & Lending Hub
+  // Navigate to specific pages
   if (moduleName === 'Surveillance & Lending Hub') {
     window.location.href = 'surb-lend-hub.html';
+    return;
+  }
+
+  if (moduleName === 'HR Policy Research') {
+    window.location.href = 'index.html';
     return;
   }
 
@@ -1090,17 +1051,17 @@ function ticketBanner() {
 
 function promptCards() {
   const items = [
-    { icon: 'icons/document-sparkle.svg', t: 'Summarize open cases for weekly HR meeting', isCustom: true },
-    { icon: 'icons/search-sparkle.svg', t: 'Highlight unresolved or pending items', isCustom: true },
-    { icon: 'icons/search-sparkle.svg', t: 'Find precedents for remote work arrangements', isCustom: true },
-    { icon: 'icons/form-sparkle.svg', t: 'Show exemption cases for leave policies', isCustom: true },
-    { icon: 'icons/math-func-sparkle.svg', t: 'Calculate employee allowances in another countries', isCustom: true },
+    { icon: 'icons/document-sparkle.svg', t: 'Compare surveillance reports across multiple countries', isCustom: true },
+    { icon: 'icons/search-sparkle.svg', t: 'Search for lending conditionality examples', isCustom: true },
+    { icon: 'icons/search-sparkle.svg', t: 'Find similar Article IV consultation reports', isCustom: true },
+    { icon: 'icons/form-sparkle.svg', t: 'Generate staff report from template', isCustom: true },
+    { icon: 'icons/math-func-sparkle.svg', t: 'Flag compliance issues in loan documents', isCustom: true },
   ];
-  return `<div class="max-w-[1000px] mx-auto"><div class="prompt-cards-container flex gap-3 mt-6 fade-in" style="flex-wrap: nowrap; align-items: stretch; justify-content: center;">${items.map(i => {
+  return `<div class="prompt-cards-container flex flex-col gap-2 mt-6 fade-in">${items.map(i => {
     const iconHtml = i.isCustom
       ? `<img src="${i.icon}" class="w-5 h-5 flex-shrink-0" alt="" />`
       : `<i data-lucide="${i.icon}" class="w-5 h-5 flex-shrink-0" style="color: #2256A6;"></i>`;
-    return `<button onclick="fillPrompt('${i.t}')" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); flex: 1; min-width: 200px;">${iconHtml}<span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">${i.t}</span></button>`;
+    return `<button onclick="fillPrompt('${i.t}')" class="act-btn flex items-center gap-3 px-4 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04); width: 100%;">${iconHtml}<span class="text-left" style="font-size: 0.8rem; line-height: 1.15rem; font-weight: 400; color: #374151;">${i.t}</span></button>`;
   }).join('')}</div></div>`;
 }
 
@@ -1323,7 +1284,7 @@ function generateDraftLetterHTML() {
       <div contenteditable="true" class="w-full leading-relaxed" style="font-family: inherit; min-height: 500px; outline: none; background: white; font-size: 0.9rem; padding: 2rem 3rem; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem;">
       <p style="margin: 0 0 1em 0;">Dear John Smith,</p>
 
-      <p style="margin: 0 0 1em 0;">I am writing to inform you of the decision regarding your request for an extension of parental leave due to medical complications <span class="citation-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Case</span>.</p>
+      <p style="margin: 0 0 1em 0;">I am writing to inform you of the decision regarding your request for an extension of parental leave due to medical complications <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Case</span>.</p>
 
       <p style="margin: 0 0 1em 0;">After careful review of your request and supporting medical documentation, I am pleased to inform you that your request for an <strong>8-week extension</strong> of parental leave has been <strong>approved</strong>.</p>
 
@@ -1335,11 +1296,11 @@ function generateDraftLetterHTML() {
         <li>Decision Date: March 22, 2023</li>
       </ul>
 
-      <p style="margin: 0 0 1em 0;">Your request meets the criteria outlined in <strong>HR Policy 4.2.3 - Parental Leave Extensions</strong> <span class="citation-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Policy</span>, specifically the provisions for medical exceptions. The medical documentation provided by Dr. Anderson <span class="citation-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Guide</span> clearly supports the need for extended recovery time.</p>
+      <p style="margin: 0 0 1em 0;">Your request meets the criteria outlined in <strong>HR Policy 4.2.3 - Parental Leave Extensions</strong> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Policy</span>, specifically the provisions for medical exceptions. The medical documentation provided by Dr. Anderson <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Guide</span> clearly supports the need for extended recovery time.</p>
 
       <p style="margin: 0 0 1em 0;"><strong>Please note the following:</strong></p>
       <ul style="margin: 0 0 1em 0; padding-left: 1.5em;">
-        <li>You are required to provide medical clearance before your return to work <span class="citation-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Policy</span></li>
+        <li>You are required to provide medical clearance before your return to work <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal" style="background: #F3F4F6; color: #6B7280; margin-left: 2px;">Policy</span></li>
         <li>A phased return option is available if needed upon your return</li>
         <li>HR will check in with you at the 6-week mark to discuss your transition plans</li>
       </ul>
@@ -1404,9 +1365,6 @@ function openCitationsPanel() {
       btn.style.color = '#111827';
     }
 
-    // Show citation tags in the letter
-    document.body.classList.add('citations-visible');
-
     // Reinitialize Lucide icons
     lucide.createIcons();
   }
@@ -1426,9 +1384,6 @@ function closeCitationsPanel() {
     btn.style.backgroundColor = 'white';
     btn.style.color = '#374151';
   }
-
-  // Hide citation tags in the letter
-  document.body.classList.remove('citations-visible');
 }
 
 function generateCitationsHTML() {
@@ -1867,493 +1822,33 @@ function caseCard(id, star, date, dept, ext, justification, outcome, dm) {
 /* ────── Steps content ────── */
 function renderUpToStep(step) {
   const m = document.getElementById('messages');
-  const filterTags = document.getElementById('filter-tags');
   let html = '';
 
-  filterTags.className = 'hidden';
-
-  // Step 1: Empty chat with prompt cards (hidden once user sends message at step 3+)
-  if (step <= 1) {
-    html += `<div class="text-center pt-0 pb-4 fade-in" style="position: relative;">
-      <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: contain; top: 0; left: 50%; transform: translateX(-50%); z-index: 0; pointer-events: none; opacity: 0.6;">
-        <source src="icons/ai-bg-shade.mp4" type="video/mp4">
+  // Step 0: Empty chat with prompt cards
+  html += `<div class="text-center pt-0 pb-4 fade-in" style="position: relative;">
+    <video autoplay loop muted playsinline style="position: absolute; width: 160px; height: 160px; object-fit: contain; top: 0; left: 50%; transform: translateX(-50%); z-index: 0; pointer-events: none; opacity: 0.6;">
+      <source src="icons/ai-bg-shade.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="relative inline-block mx-auto" style="width: 160px; height: 160px; z-index: 1; margin-bottom: -1rem;">
+      <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <source src="icons/ai-char-white.mp4" type="video/mp4">
+        <source src="icons/ai-char-white.mov" type="video/quicktime">
         Your browser does not support the video tag.
       </video>
-      <div class="relative inline-block mx-auto" style="width: 160px; height: 160px; z-index: 1; margin-bottom: -1rem;">
-        <video autoplay loop muted playsinline class="w-20 h-20 rounded-full" style="object-fit: cover; display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-          <source src="icons/ai-char-white.mp4" type="video/mp4">
-          <source src="icons/ai-char-white.mov" type="video/quicktime">
-          Your browser does not support the video tag.
-        </video>
-        <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none; z-index: 2;">
-          <i data-lucide="sparkles" class="w-8 h-8" style="color:#fff;"></i>
-        </div>
+      <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none; z-index: 2;">
+        <i data-lucide="sparkles" class="w-8 h-8" style="color:#fff;"></i>
       </div>
-      <h2 class="font-semibold text-gray-800 mb-1" style="font-size: 1.7rem; position: relative; z-index: 1;">Hi John, how can I help you today?</h2>
-    </div>`;
-    if (step === 0) html += promptCards();
-  }
+    </div>
+    <h2 class="font-semibold text-gray-800 mb-1" style="font-size: 1.7rem; position: relative; z-index: 1;">Hi John, how can I help you today?</h2>
+  </div>`;
+  html += promptCards();
 
-  // Step 2: Ticket linked
-  if (step >= 1 && step < 2) {
-    html += ticketBanner();
-    html += `<div class="flex gap-3 my-6 fade-in" style="flex-wrap: nowrap; align-items: stretch;">
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/search-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Find similar parental leave precedents</span></button>
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/chat-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">What documentation is required for medical cases?</span></button>
-      <button onclick="goToStep(2)" class="act-btn flex flex-col items-start gap-2 px-5 py-4 rounded-xl bg-white border border-gray-300 cursor-pointer hover:border-imf-accent hover:bg-gray-50 transition-all" style="box-shadow: 0 1px 3px rgba(0,0,0,.08); flex: 1; min-width: 0;"><img src="icons/action-sparkle.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span class="text-left" style="font-size: 0.81rem; line-height: 1.15rem; font-weight: 400; color: #374151;">Check current parental leave policy requirements</span></button>
-    </div>`;
-  }
-
-  // Ticket banner only (no suggestion cards) for step 2+
-  if (step >= 2) {
-    html += ticketBanner();
-  }
-
-  // Inline input field for steps 0-1 (centered in content area) - not shown in side panel mode
-  const appContainer = document.getElementById('app-container');
-  const isSidePanelMode = appContainer && appContainer.classList.contains('side-panel-mode');
-
-  if (step <= 1 && !isSidePanelMode) {
-    html += `<div class="mt-8 fade-in">
-      <div class="chat-input-container bg-white rounded-2xl px-4 py-3 border border-gray-200" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
-        <textarea id="chat-input-inline" rows="2" placeholder="Ask me about HR policies, precedents, or cases..." class="chat-input w-full text-sm border-none outline-none bg-transparent text-gray-800 resize-none mb-2" style="line-height: 1.5;" autofocus></textarea>
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-1">
-            <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="paperclip" class="w-[18px] h-[18px]"></i></button>
-            <button onclick="openToolsModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="sliders-horizontal" class="w-[18px] h-[18px]"></i><span class="text-sm">Tools</span></button>
-            ${step >= 1 ? '<div class="flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1" style="background: transparent; border: 1px solid #F59E0B; color: #D97706; padding-top: 0.25rem; padding-bottom: 0.25rem;"><span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #D97706;"><i data-lucide="x" class="w-3 h-3"></i></button></div>' : ''}
-          </div>
-          <div class="flex items-center gap-1">
-            <button class="p-1.5 rounded-md hover:bg-gray-100 bg-transparent border-none cursor-pointer text-gray-600 flex-shrink-0"><i data-lucide="mic" class="w-[18px] h-[18px]"></i></button>
-            <button onclick="nextStep()" class="p-2 rounded-xl border-none cursor-pointer text-white flex-shrink-0" style="background:linear-gradient(135deg,#004C97,#0060BF);"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
-          </div>
-        </div>
-      </div>
-      <p class="text-[11px] text-gray-400 mt-2 text-center" style="color: #6B7785; font-weight: 300;">AIDA may produce inaccurate information. Always verify it and align to IMF policies.</p>
-    </div>`;
-  }
-
-  // Step 3: User query + typing
-  if (step >= 2) {
-    html += userMsg(
-      'What are the precedents for extending parental leave beyond standard duration due to medical circumstances?',
-      '<span class="text-[10px] text-gray-400">Just now</span>'
-    );
-    if (step === 2) {
-      html += `<div class="fade-in">
-        <div>
-          <div class="flex justify-start py-3">
-            <div class="relative inline-flex items-center justify-center" style="width: 48px; height: 48px;">
-              <div class="spinner-ring"></div>
-              <div class="relative inline-block" style="width: 40px; height: 40px; z-index: 1;">
-                <video autoplay loop muted playsinline class="w-full h-full rounded-full" style="object-fit: cover; display: block;">
-                  <source src="icons/ai-char-white.mp4" type="video/mp4">
-                  <source src="icons/ai-char-white.mov" type="video/quicktime">
-                </video>
-                <div class="absolute inset-0 flex items-center justify-center" style="pointer-events: none; z-index: 2;">
-                  <i data-lucide="sparkles" class="w-4 h-4" style="color:#fff;"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="accordion-container" class="mt-2 space-y-2">
-            <!-- Accordions will be inserted here dynamically -->
-          </div>
-        </div>
-      </div>`;
-
-      // Start the accordion animation sequence after render
-      setTimeout(() => {
-        startAccordionAnimation();
-      }, 500);
-    }
-  }
-
-  // Step 4: AI response — with confidence tag, gradient summary, active highlight on step 5
-  if (step >= 3) {
-    const medActive = step >= 4; // highlight medical complications when canvas is open
-    html += aiMsg(`
-      <div class="flex items-center gap-2 mb-3">
-        <details class="group inline-block">
-          <summary class="flex items-center gap-2 cursor-pointer list-none">
-            <span class="text-gray-600 hover:text-gray-800 flex items-center gap-1" style="font-size: 0.8rem; opacity: 0.7;">
-              Research completed
-              <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-            </span>
-          </summary>
-          <div class="mt-3 space-y-2">
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Analyzing query intent</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div class="text-gray-700"><span class="text-gray-500">Detected:</span> Precedent search for policy exception</div>
-                <div class="text-gray-700"><span class="text-gray-500">Topic:</span> Parental leave extensions</div>
-                <div class="text-gray-700"><span class="text-gray-500">Context:</span> Medical circumstances</div>
-                <div class="text-gray-700"><span class="text-gray-500">Classification:</span> Policy interpretation + Exception request</div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Searching connected systems</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div class="text-gray-700">Querying SharePoint HR Policy repository... <span class="text-green-600">✓ 847 documents scanned</span></div>
-                <div class="text-gray-700">Searching Nexus case files... <span class="text-green-600">✓ 1,243 cases reviewed</span></div>
-                <div class="text-gray-700">Accessing ServiceNow historical tickets... <span class="text-green-600">✓ 392 relevant tickets found</span></div>
-                <div class="text-gray-700">Checking PeopleSoft employee records... <span class="text-green-600">✓ 67 similar cases identified</span></div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Applying semantic filters</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div class="text-gray-700"><span class="text-gray-500">Filtering for:</span> "parental leave" + "medical extension" + "precedent"</div>
-                <div class="text-gray-700"><span class="text-gray-500">Excluding:</span> Standard duration cases, routine approvals</div>
-                <div class="text-gray-700"><span class="text-gray-500">Prioritizing:</span> Exception approvals, medical complications, policy interpretations</div>
-                <div class="text-gray-700"><span class="text-gray-500">Time range:</span> Last 7 years of precedents</div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Mining relevant precedents</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div>Found 23 relevant cases with medical extensions</div>
-                <div>Analyzing approval patterns and rationale</div>
-                <div>Extracting policy citations and decision criteria</div>
-                <div>Identifying similar circumstances and outcomes</div>
-              </div>
-            </details>
-            <details class="group">
-              <summary class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 transition-transform group-open:rotate-90"></i>
-                <span>Generating response</span>
-              </summary>
-              <div class="mt-2 p-3 rounded-lg space-y-2 text-sm text-gray-700" style="background: #F9FAFB; border: 1px solid #E5E7EB;">
-                <div>Structuring precedent summary</div>
-                <div>Adding source citations from: HR Policy Manual Section 4.2, ServiceNow Cases, Nexus Documents</div>
-                <div>Confidence level: High (89%)</div>
-                <div>Response ready for review</div>
-              </div>
-            </details>
-            <div class="flex items-center gap-1.5 text-xs text-green-600" style="margin-top: 1rem;">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-              <span>Analysis complete (10.2 seconds)</span>
-            </div>
-          </div>
-        </details>
-        <span class="tag" style="background:#0C9769; color:#fff;">High Confidence: 92%</span>
-      </div>
-      <p class="text-sm text-gray-800 leading-relaxed mb-4">I've searched across HR repositories and found <strong>8 relevant precedents</strong> for parental leave extensions due to medical circumstances. Based on ticket REQ0012345, the most relevant case is <strong><a href="#" onclick="goToStep(4); return false;" class="text-imf-blue hover:underline cursor-pointer">Case #2023-045</a></strong> (similar medical circumstances).</p>
-      <p class="font-semibold text-gray-500 uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Precedent Categories</p>
-      <div class="space-y-2 mb-4">
-        <details id="medical-complications-accordion" class="group rounded-lg border border-gray-300 bg-white" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
-          <summary class="w-full text-left p-4 cursor-pointer transition-all text-sm flex items-center justify-between list-none hover:bg-gray-50 rounded-lg">
-            <span class="flex items-center gap-2">
-              <i data-lucide="history" class="w-4 h-4 text-gray-800"></i>
-              <span class="font-medium text-gray-800">Medical complications</span>
-              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center; display: inline-block;">4 cases</span>
-            </span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"></i>
-          </summary>
-          <div class="px-4 pb-4 pt-4 border-t border-gray-200">
-            <div id="case-2023-045-container">${caseCard('#2023-045', true, '13 Mar 2023', 'Finance', '8 weeks', 'Postpartum complications requiring extended recovery', 'Approved', 'HR Director')}</div>
-            ${caseCard('#2022-198', false, '5 Sep 2022', 'Research', '6 weeks', 'Pregnancy-related medical condition', 'Approved', 'Division Chief')}
-            ${caseCard('#2023-012', false, '22 Jan 2023', 'IT Services', '4 weeks', 'Neonatal intensive care requirements', 'Approved', 'HR Director')}
-            ${caseCard('#2021-287', false, '14 Nov 2021', 'Legal', '10 weeks', 'Severe postpartum condition with hospitalization', 'Approved', 'Deputy HR Director')}
-          </div>
-        </details>
-        <details class="group rounded-lg border border-gray-300 bg-white" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
-          <summary class="w-full text-left p-4 cursor-pointer transition-all text-sm flex items-center justify-between list-none hover:bg-gray-50 rounded-lg">
-            <span class="flex items-center gap-2">
-              <i data-lucide="history" class="w-4 h-4 text-gray-800"></i>
-              <span class="font-medium text-gray-800">Multiple births with complications</span>
-              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center; display: inline-block;">2 cases</span>
-            </span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"></i>
-          </summary>
-          <div class="px-4 pb-4 pt-4 border-t border-gray-200">
-            ${caseCard('#2022-156', false, '18 Jun 2022', 'Communications', '12 weeks', 'Twins with neonatal complications', 'Approved', 'HR Director')}
-            ${caseCard('#2023-089', false, '7 Apr 2023', 'Finance', '10 weeks', 'Triplets requiring extended care', 'Approved', 'Deputy HR Director')}
-          </div>
-        </details>
-        <details class="group rounded-lg border border-gray-300 bg-white" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
-          <summary class="w-full text-left p-4 cursor-pointer transition-all text-sm flex items-center justify-between list-none hover:bg-gray-50 rounded-lg">
-            <span class="flex items-center gap-2">
-              <i data-lucide="history" class="w-4 h-4 text-gray-800"></i>
-              <span class="font-medium text-gray-800">International assignments with medical factors</span>
-              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center; display: inline-block;">2 cases</span>
-            </span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"></i>
-          </summary>
-          <div class="px-4 pb-4 pt-4 border-t border-gray-200">
-            ${caseCard('#2021-334', false, '29 Dec 2021', 'Field Operations', '6 weeks', 'Medical evacuation from field location', 'Approved', 'Regional Director')}
-            ${caseCard('#2022-245', false, '3 Oct 2022', 'External Relations', '8 weeks', 'Limited medical facilities at duty station', 'Approved', 'HR Director')}
-          </div>
-        </details>
-      </div>
-      <p class="font-semibold text-gray-500 uppercase mb-2 mt-6" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Related materials</p>
-      <div class="space-y-2 mb-4">
-        <div class="rounded-lg border border-gray-300 bg-white p-4 cursor-pointer hover:bg-gray-50 transition-all" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
-          <div class="text-sm flex items-center justify-between">
-            <span class="flex items-center gap-2">
-              <i data-lucide="book-check" class="w-4 h-4 text-gray-800"></i>
-              <span class="font-medium text-gray-800">Policies</span>
-              <span class="tag" style="background: white; color: #6B7280; border: 1px solid #D1D5DB; font-size: 12px; min-width: 72px; text-align: center; display: inline-block;">24 policies</span>
-            </span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
-          </div>
-        </div>
-      </div>
-      ${feedbackBtns()}
-    `);
-  }
-
-  // Step 5: User request for draft
-  if (step >= 5) {
-    html += userMsg('Generate a draft response email based on the Case #2023-045.');
-  }
-
-  // Step 5: AI response with draft email card
-  if (step >= 5) {
-    html += aiMsg(`
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-gray-600 hover:text-gray-800 flex items-center gap-1" style="font-size: 0.8rem; opacity: 0.7;">
-          Draft completed
-          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        </span>
-        <span class="tag" style="background:#0C9769; color:#fff;">High Confidence: 95%</span>
-      </div>
-      <p class="mb-3">I generated a draft message for your employee with approval confirmation and next steps.</p>
-    `);
-    html += `<div class="fade-in mb-4">
-      <div class="rounded-lg border border-gray-300 bg-white p-4 cursor-pointer hover:bg-gray-50 transition-all flex items-center justify-between" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);" onclick="openDraftEmailCanvas()">
-        <div class="flex items-center gap-3">
-          <div class="relative flex items-center justify-center" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
-            <video autoplay loop muted playsinline style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
-              <source src="icons/ai-char-white.mp4" type="video/mp4">
-              <source src="icons/ai-char-white.mov" type="video/quicktime">
-            </video>
-            <i data-lucide="sparkles" class="w-4 h-4" style="position: relative; z-index: 1; color: white;"></i>
-          </div>
-          <span class="font-medium text-gray-800">Draft response to employee</span>
-        </div>
-        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-      </div>
-    </div>`;
-    html += aiMsg(feedbackBtns());
-  }
-
-
-  // Step 7: User confirms send
-  if (step >= 7) {
-    html += userMsg('Send this message to the employee (John Smith).');
-  }
-
-  // Step 7: Email sent confirmation
-  if (step >= 7) {
-    html += aiMsg(`
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-gray-600 hover:text-gray-800 flex items-center gap-1" style="font-size: 0.8rem; opacity: 0.7;">
-          Action successful
-          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        </span>
-      </div>
-      <p class="mb-3">Email was successfully sent. I updated ServiceNow ticket <a href="#" class="text-imf-blue hover:underline font-medium">REQ0012345</a> and included the sent message there too.</p>
-      <div class="flex flex-wrap gap-2 mb-3">
-        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          Open in ServiceNow
-          <i data-lucide="external-link" class="w-5 h-5 text-imf-blue"></i>
-        </button>
-        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="refresh-cw" class="w-5 h-5 text-imf-blue"></i>
-          Update Ticket Status
-        </button>
-        <button class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="layout-template" class="w-5 h-5 text-imf-blue"></i>
-          Save to Templates
-        </button>
-        <button onclick="goToStep(0)" class="act-btn flex items-center gap-2 rounded-xl text-imf-blue bg-transparent border border-gray-300 cursor-pointer hover:bg-gray-50" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;">
-          <i data-lucide="message-circle" class="w-5 h-5 text-imf-blue"></i>
-          Start New Chat
-        </button>
-      </div>
-      ${feedbackBtns()}
-    `);
-  }
-
-
+  // Render the content
   m.innerHTML = html;
-
-  // Center content vertically on steps 0-1 in full screen mode
-  const feed = document.getElementById('chat-feed');
-  const isCentered = step <= 1 && !appContainer.classList.contains('side-panel-mode');
-
-  if (isCentered) {
-    feed.classList.add('center-content');
-  } else {
-    feed.classList.remove('center-content');
-  }
-
-  // Show/hide ticket chip in bottom input area (step 1+ when bottom input is visible)
-  const ticketChipBottom = document.getElementById('ticket-chip-bottom');
-  if (ticketChipBottom) {
-    if (step >= 1) {
-      ticketChipBottom.className = 'flex items-center gap-1.5 px-2.5 rounded-full text-sm mr-1';
-      ticketChipBottom.style.cssText = 'background: transparent; border: 1px solid #F59E0B; color: #D97706; padding-top: 0.25rem; padding-bottom: 0.25rem;';
-      ticketChipBottom.innerHTML = '<span>🎫 REQ0012345</span><button onclick="goToStep(0)" class="ml-1 p-0.5 hover:bg-amber-100 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center" style="color: #D97706;"><i data-lucide="x" class="w-3 h-3"></i></button>';
-    } else {
-      ticketChipBottom.className = 'hidden';
-      ticketChipBottom.innerHTML = '';
-    }
-  }
-
-  // Update send/stop button based on step (step 2 = typing/loading, show stop button)
-  const sendStopBtn = document.getElementById('send-stop-btn');
-  if (sendStopBtn) {
-    if (step === 2) {
-      // Show outlined stop button on step 2 (3 of 10 - while AI is typing)
-      sendStopBtn.innerHTML = '<i data-lucide="square" class="w-4 h-4"></i>';
-      sendStopBtn.style.background = 'transparent';
-      sendStopBtn.style.border = '1px solid #CBD5E1';
-      sendStopBtn.style.color = '#64748B';
-    } else {
-      // Show primary send button on all other steps
-      sendStopBtn.innerHTML = '<i data-lucide="arrow-up" class="w-4 h-4"></i>';
-      sendStopBtn.style.background = 'linear-gradient(135deg,#004C97,#0060BF)';
-      sendStopBtn.style.border = 'none';
-      sendStopBtn.style.color = '#fff';
-    }
-  }
-
-  // Open case preview panel on step 4 (5 of 10)
-  const casePreviewPanel = document.getElementById('case-preview-panel');
-  if (casePreviewPanel) {
-    if (step === 4) {
-      // Open case preview panel and populate with case #2023-045
-      casePreviewPanel.classList.add('open');
-      const content = document.getElementById('case-preview-content');
-      if (content && !content.innerHTML) {
-        content.innerHTML = generateCasePreviewHTML('#2023-045');
-      }
-
-      // Expand Medical complications accordion on step 4
-      setTimeout(() => {
-        const medicalAccordion = document.getElementById('medical-complications-accordion');
-        if (medicalAccordion) {
-          medicalAccordion.setAttribute('open', '');
-        }
-
-        // Change "Preview document" to "Close preview" for case #2023-045
-        const caseContainer = document.getElementById('case-2023-045-container');
-        if (caseContainer) {
-          const previewBtn = caseContainer.querySelector('button[onclick*="openCasePreview"]');
-          if (previewBtn) {
-            previewBtn.textContent = 'Close preview';
-            previewBtn.onclick = function() { closeCasePreview(); };
-            // Change to primary blue style
-            previewBtn.style.background = 'linear-gradient(135deg,#004C97,#0060BF)';
-            previewBtn.style.border = 'none';
-            previewBtn.style.color = '#fff';
-            previewBtn.onmouseover = null;
-            previewBtn.onmouseout = null;
-          }
-        }
-        lucide.createIcons();
-      }, 50);
-    } else {
-      // Close case preview panel on other steps
-      casePreviewPanel.classList.remove('open');
-
-      // Reset accordion and button on other steps
-      const medicalAccordion = document.getElementById('medical-complications-accordion');
-      if (medicalAccordion) {
-        medicalAccordion.removeAttribute('open');
-      }
-
-      // Reset button text back to "Preview document"
-      const caseContainer = document.getElementById('case-2023-045-container');
-      if (caseContainer) {
-        const previewBtn = caseContainer.querySelector('button');
-        if (previewBtn && previewBtn.textContent === 'Close preview') {
-          previewBtn.textContent = 'Preview document';
-          previewBtn.onclick = function() { openCasePreview('#2023-045'); };
-          // Reset to outlined style
-          previewBtn.style.background = 'transparent';
-          previewBtn.style.border = '1px solid #004C97';
-          previewBtn.style.color = '#004C97';
-          previewBtn.onmouseover = function() { this.style.background='#004C97'; this.style.color='#fff'; };
-          previewBtn.onmouseout = function() { this.style.background='transparent'; this.style.color='#004C97'; };
-        }
-      }
-    }
-  }
-
-  // Open canvas panel on step 5-6 only (not step 7+)
-  const canvasPanel = document.getElementById('canvas-panel');
-  if (canvasPanel) {
-    if (step >= 5 && step <= 6) {
-      // Close case preview panel first
-      if (casePreviewPanel) {
-        casePreviewPanel.classList.remove('open');
-      }
-
-      // Collapse left navigation sidebar
-      const sidebar = document.getElementById('sidebar');
-      const headerToggle = document.getElementById('header-toggle-btn');
-      if (sidebar && !sidebar.classList.contains('collapsed')) {
-        sidebar.classList.add('collapsed');
-        if (headerToggle) {
-          headerToggle.style.display = '';
-        }
-      }
-
-      // Open canvas panel and populate with draft email content
-      canvasPanel.classList.add('open');
-      const canvasContent = document.getElementById('canvas-content');
-      if (canvasContent && !canvasContent.innerHTML) {
-        canvasContent.innerHTML = generateDraftLetterHTML();
-        lucide.createIcons();
-      }
-    } else {
-      // Close canvas panel on other steps
-      canvasPanel.classList.remove('open');
-    }
-  }
-
-  // Open checklist modal on step 6
-  if (step === 6) {
-    setTimeout(() => {
-      openChecklistModal();
-    }, 300); // Small delay to ensure DOM is ready
-  }
-
-  // Re-init icons
   lucide.createIcons();
-
-  // Scroll behavior based on step
-  if (step === 4) {
-    // Scroll to top on step 4 (5 of 10) to show the case preview
-    setTimeout(() => {
-      feed.scrollTop = 0;
-      updateScrollGradient();
-    }, 50);
-  } else if (step >= 2) {
-    // Scroll to bottom for other steps 2+
-    setTimeout(() => {
-      feed.scrollTop = feed.scrollHeight;
-      updateScrollGradient();
-    }, 50);
-  }
 }
 
-/* ────── Scroll Gradient ────── */
 function updateScrollGradient() {
   const feed = document.getElementById('chat-feed');
   const gradient = document.getElementById('scroll-gradient');
@@ -2523,6 +2018,661 @@ function startAccordionAnimation() {
   showNextAccordion();
 }
 
+/* ────── Search Interface ────── */
+function openSearchExplore() {
+  // Update active nav states
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => link.classList.remove('active'));
+  document.getElementById('search-explore-link').classList.add('active');
+
+  // Open canvas panel with search interface
+  const canvasPanel = document.getElementById('canvas-panel');
+  const canvasContent = document.getElementById('canvas-content');
+  if (canvasPanel && canvasContent) {
+    canvasContent.innerHTML = generateSearchInterfaceHTML();
+    canvasPanel.classList.add('open');
+    lucide.createIcons();
+  }
+}
+
+function generateSearchInterfaceHTML() {
+  return `
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl font-semibold text-gray-800">Document Search & Repository</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="inline-flex rounded-lg shadow-sm" role="group">
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white border-none focus:z-10" style="background:linear-gradient(135deg,#004C97,#0060BF); border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem;">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            Export Results
+          </button>
+          <button type="button" class="inline-flex items-center px-2 py-2 text-sm font-medium text-white border-none focus:z-10" style="background:linear-gradient(135deg,#004C97,#0060BF); border-left: 1px solid rgba(255,255,255,0.2);">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-50 focus:z-10">
+            <i data-lucide="bookmark" class="w-4 h-4"></i>
+            Save Search
+          </button>
+          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-50 focus:z-10">
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+            Share
+          </button>
+        </div>
+        <button onclick="closeCanvas()" class="p-2 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search and Filters Combined -->
+    <div class="flex items-center gap-0 mb-6 border border-gray-300 rounded-lg overflow-hidden">
+      <!-- Search Input -->
+      <div class="relative flex-1">
+        <i data-lucide="search" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2"></i>
+        <input type="text" placeholder="Search documents, policies, reports..." class="w-full pl-10 pr-4 py-3 border-none focus:outline-none focus:ring-0" style="background: white;" />
+      </div>
+
+      <!-- Document Type Filter -->
+      <div class="relative border-l border-gray-300">
+        <select class="appearance-none px-3 py-3 pr-8 text-sm border-none bg-white cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-0" style="height: 100%;">
+          <option selected>Document Type: All</option>
+          <option>Surveillance Reports</option>
+          <option>Lending Agreements</option>
+          <option>Policy Documents</option>
+          <option>Templates</option>
+        </select>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"></i>
+      </div>
+
+      <!-- Region Filter -->
+      <div class="relative border-l border-gray-300">
+        <select class="appearance-none px-3 py-3 pr-8 text-sm border-none bg-white cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-0" style="height: 100%;">
+          <option selected>Region: All</option>
+          <option>Africa</option>
+          <option>Asia-Pacific</option>
+          <option>Europe</option>
+          <option>Latin America</option>
+          <option>Middle East</option>
+        </select>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"></i>
+      </div>
+
+      <!-- Date Range Filter -->
+      <div class="relative border-l border-gray-300">
+        <select class="appearance-none px-3 py-3 pr-8 text-sm border-none bg-white cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-0" style="height: 100%;">
+          <option>Date Range: All</option>
+          <option>Last 30 days</option>
+          <option selected>Last 6 months</option>
+          <option>Last year</option>
+          <option>Custom range</option>
+        </select>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"></i>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="relative border-l border-gray-300">
+        <select class="appearance-none px-3 py-3 pr-8 text-sm border-none bg-white cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-0" style="height: 100%;">
+          <option selected>Status: Draft, Under Review</option>
+          <option>Draft</option>
+          <option>Under Review</option>
+          <option>Approved</option>
+          <option>Archived</option>
+          <option>All Statuses</option>
+        </select>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"></i>
+      </div>
+    </div>
+
+    <div class="border-b border-gray-200 mb-6" style="margin-left: -1.5rem; margin-right: -1.5rem;"></div>
+
+    <div>
+      <!-- Documents List -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold text-gray-700">Documents (1,247)</h3>
+          <select class="text-xs border border-gray-300 rounded px-2 py-1">
+            <option>Sort by: Most Recent</option>
+            <option>Sort by: Relevance</option>
+            <option>Sort by: Title</option>
+          </select>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Document Card 1 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Kenya 2024</h4>
+                <p class="text-xs text-gray-600 mb-2">Comprehensive surveillance report covering economic developments and policy recommendations</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Feb 8, 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 2 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Extended Credit Facility - Bangladesh</h4>
+                <p class="text-xs text-gray-600 mb-2">Lending arrangement documentation and conditionality framework</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Feb 5, 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 3 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Policy Support Instrument - Morocco</h4>
+                <p class="text-xs text-gray-600 mb-2">Non-financial instrument supporting economic reforms and policy objectives</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F3F4F6; color: #6B7280;">Policy Document</span>
+                  <span class="text-xs text-gray-500">Middle East</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Jan 28, 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 4 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Rapid Financing Instrument - Ecuador</h4>
+                <p class="text-xs text-gray-600 mb-2">Emergency financing documentation for urgent balance of payments needs</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEE2E2; color: #DC2626;">Emergency Lending</span>
+                  <span class="text-xs text-gray-500">Latin America</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Jan 15, 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 5 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Staff Report Template - Article IV</h4>
+                <p class="text-xs text-gray-600 mb-2">Standard template for bilateral surveillance mission reports</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F0FDF4; color: #16A34A;">Template</span>
+                  <span class="text-xs text-gray-500">Global</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Dec 20, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 6 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Stand-By Arrangement - Argentina 2024</h4>
+                <p class="text-xs text-gray-600 mb-2">Financial support program with quarterly review conditions</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Latin America</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Dec 15, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 7 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Indonesia 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Economic assessment focusing on fiscal policy and financial stability</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Dec 10, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 8 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Poverty Reduction Strategy - Ghana</h4>
+                <p class="text-xs text-gray-600 mb-2">Country strategy document for sustainable development objectives</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F3F4F6; color: #6B7280;">Policy Document</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Dec 5, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 9 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Precautionary Liquidity Line - Poland</h4>
+                <p class="text-xs text-gray-600 mb-2">Precautionary arrangement for countries with strong fundamentals</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Europe</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Nov 28, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 10 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Egypt 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Comprehensive review of economic policies and external stability</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Middle East</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Nov 20, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 11 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Extended Fund Facility - Pakistan</h4>
+                <p class="text-xs text-gray-600 mb-2">Medium-term lending for structural balance of payments problems</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Nov 15, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 12 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Regional Economic Outlook - Sub-Saharan Africa</h4>
+                <p class="text-xs text-gray-600 mb-2">Semi-annual analysis of regional economic trends and outlook</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Nov 10, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 13 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Debt Sustainability Analysis - Tunisia</h4>
+                <p class="text-xs text-gray-600 mb-2">Assessment of public debt trajectory and fiscal sustainability</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F3F4F6; color: #6B7280;">Policy Document</span>
+                  <span class="text-xs text-gray-500">Middle East</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Nov 5, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 14 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Vietnam 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Assessment of macroeconomic performance and policy recommendations</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Oct 30, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 15 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Conditionality Template - ECF Programs</h4>
+                <p class="text-xs text-gray-600 mb-2">Standard conditions and benchmarks for Extended Credit Facility</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F0FDF4; color: #16A34A;">Template</span>
+                  <span class="text-xs text-gray-500">Global</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Oct 25, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 16 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Flexible Credit Line - Chile</h4>
+                <p class="text-xs text-gray-600 mb-2">Precautionary instrument for strong-performing economies</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Latin America</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Oct 20, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 17 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - South Africa 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Economic surveillance focusing on growth, employment, and inequality</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Oct 15, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 18 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Stand-By Credit Facility - Zambia</h4>
+                <p class="text-xs text-gray-600 mb-2">Short-term financing for low-income countries facing urgent needs</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Oct 10, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 19 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Financial Sector Assessment - UAE</h4>
+                <p class="text-xs text-gray-600 mb-2">Comprehensive evaluation of financial system stability and soundness</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F3F4F6; color: #6B7280;">Policy Document</span>
+                  <span class="text-xs text-gray-500">Middle East</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Oct 5, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 20 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Brazil 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Economic review covering fiscal consolidation and structural reforms</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Latin America</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Sep 28, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 21 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Rapid Credit Facility - Madagascar</h4>
+                <p class="text-xs text-gray-600 mb-2">Emergency assistance for low-income countries with urgent needs</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEE2E2; color: #DC2626;">Emergency Lending</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Sep 22, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 22 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Turkey 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Assessment focusing on inflation dynamics and monetary policy framework</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Europe</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Sep 18, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 23 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Program Review Guidelines - SBA</h4>
+                <p class="text-xs text-gray-600 mb-2">Standard procedures for Stand-By Arrangement program reviews</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F0FDF4; color: #16A34A;">Template</span>
+                  <span class="text-xs text-gray-500">Global</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Sep 15, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 24 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Extended Credit Facility - Senegal</h4>
+                <p class="text-xs text-gray-600 mb-2">Three-year program supporting poverty reduction and growth</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Sep 10, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 25 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Thailand 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Economic surveillance emphasizing post-pandemic recovery strategies</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Sep 5, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 26 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Debt Restructuring Framework - Sri Lanka</h4>
+                <p class="text-xs text-gray-600 mb-2">Policy framework for sovereign debt restructuring and sustainability</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F3F4F6; color: #6B7280;">Policy Document</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Aug 30, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 27 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Nigeria 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Economic assessment covering oil sector reforms and diversification</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Africa</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Aug 25, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 28 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Stand-By Arrangement - Ukraine 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Financial support program amid ongoing economic challenges</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #FEF3E2; color: #D97706;">Lending Agreement</span>
+                  <span class="text-xs text-gray-500">Europe</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Aug 20, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 29 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Climate Policy Assessment - Philippines</h4>
+                <p class="text-xs text-gray-600 mb-2">Analysis of climate-related fiscal risks and adaptation strategies</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #F3F4F6; color: #6B7280;">Policy Document</span>
+                  <span class="text-xs text-gray-500">Asia-Pacific</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Aug 15, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Card 30 -->
+          <div class="rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-all cursor-pointer" style="box-shadow: 0 2px 8px rgba(0,0,0,.04);">
+            <div class="flex items-start gap-3">
+              <i data-lucide="file-text" class="w-5 h-5 text-imf-blue flex-shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <h4 class="font-medium text-gray-800 text-sm mb-1">Article IV Consultation - Mexico 2023</h4>
+                <p class="text-xs text-gray-600 mb-2">Economic surveillance focusing on nearshoring opportunities and risks</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs" style="background: #EBF3FE; color: #004C97;">Surveillance Report</span>
+                  <span class="text-xs text-gray-500">Latin America</span>
+                  <span class="text-xs text-gray-500">•</span>
+                  <span class="text-xs text-gray-500">Updated Aug 10, 2023</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+          <div class="text-sm text-gray-600">
+            Showing <span class="font-medium">1-30</span> of <span class="font-medium">1,247</span> documents
+          </div>
+          <div class="flex items-center gap-2">
+            <button disabled class="px-3 py-2 text-sm font-medium text-gray-400 bg-white border border-gray-200 rounded-lg cursor-not-allowed">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            <button class="px-3 py-2 text-sm font-medium text-white rounded-lg" style="background: linear-gradient(135deg, #004C97, #0060BF);">1</button>
+            <button class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">2</button>
+            <button class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">3</button>
+            <span class="px-2 text-gray-500">...</span>
+            <button class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">42</button>
+            <button class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+  `;
+}
+
 /* ────── Init ────── */
 buildDots();
 
@@ -2533,8 +2683,23 @@ if (window.location.hash === '#step1') {
   history.replaceState(null, null, ' ');
 } else {
   renderUpToStep(0);
-  // Set initial active state for New chat link
+  // Set initial active state for New Task link
   document.getElementById('new-chat-link').classList.add('active');
+
+  // Show bottom input area
+  const bottomInputArea = document.getElementById('bottom-input-area');
+  if (bottomInputArea) {
+    bottomInputArea.style.display = 'block';
+  }
+
+  // Open canvas panel by default with search interface for New Task
+  const canvasPanel = document.getElementById('canvas-panel');
+  const canvasContent = document.getElementById('canvas-content');
+  if (canvasPanel && canvasContent) {
+    canvasContent.innerHTML = generateSearchInterfaceHTML();
+    canvasPanel.classList.add('open');
+    lucide.createIcons();
+  }
 }
 </script>
 </body>
